@@ -1,0 +1,42 @@
+@model List<GyanGanga.Web.Models.ViewModels.BookListViewModel> 
+ 
+@{ 
+    ViewData["Title"] = "Book Catalog"; 
+} 
+ 
+<h1>Book Catalog</h1> 
+ 
+<table class="table table-striped"> 
+    <thead class="table-dark"> 
+        <tr> 
+            <th>Title</th> 
+            <th>Author</th> 
+            <th>Price</th> 
+            <th>Format</th> 
+            <th></th> 
+        </tr> 
+    </thead> 
+    <tbody> 
+        @if (Model != null && Model.Any()) 
+        { 
+            @foreach (var book in Model) 
+            { 
+                <tr> 
+                    <td>@book.Title</td> 
+                    <td>@book.Author</td> 
+                    <td>@book.Price.ToString("C")</td> 
+                    <td>@book.Format</td> 
+                    <td> 
+                        <a asp-action="Details" asp-route-id="@book.Id" class="btn btn-primary">Details</a> 
+                    </td> 
+                </tr> 
+            } 
+        } 
+        else 
+        { 
+            <tr> 
+                <td colspan="5">No books available.</td> 
+            </tr> 
+        } 
+    </tbody> 
+</table> 

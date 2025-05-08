@@ -1,6 +1,6 @@
-namespace GyanGanga.Web.Models.Entities 
+namespace GyanGanga.Web.Models.ViewModels 
 { 
-    public class Book 
+    public class BookDetailsViewModel 
     { 
         public int Id { get; set; } 
         public string? Title { get; set; } 

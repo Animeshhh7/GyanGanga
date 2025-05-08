@@ -8,9 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add MVC services 
 builder.Services.AddControllersWithViews(); 
  
-// Configure SQLite database 
+// Configure PostgreSQL database 
 builder.Services.AddDbContext<GyanGangaDbContext>(options => 
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))); 
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))); 
  
 // Add AutoMapper for model mapping 
 builder.Services.AddAutoMapper(typeof(Program)); 
@@ -35,5 +35,12 @@ app.UseAuthorization();
 app.MapControllerRoute( 
     name: "default", 
     pattern: "{controller=Home}/{action=Index}/{id?}"); 
+ 
+// Seed the database 
+using (var scope = app.Services.CreateScope()) 
+{ 
+    var dbContext = scope.ServiceProvider.GetRequiredService<GyanGangaDbContext>(); 
+    SeedData.Initialize(dbContext); 
+} 
  
 app.Run(); 

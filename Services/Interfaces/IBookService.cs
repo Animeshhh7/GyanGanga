@@ -1,7 +1,11 @@
+using GyanGanga.Web.Models.ViewModels; 
+using System.Threading.Tasks; 
+ 
 namespace GyanGanga.Web.Services.Interfaces 
 { 
     public interface IBookService 
     { 
-        // Methods for book operations will be added later 
+        Task<List<BookListViewModel>> GetBooksAsync(); 
+        Task<BookDetailsViewModel?> GetBookByIdAsync(int id); 
     } 
 } 

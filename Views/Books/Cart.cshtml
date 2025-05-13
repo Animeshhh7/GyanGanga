@@ -199,6 +199,18 @@
     </style>
 
     <h2 class="section-title">Your Cart</h2>
+    @if (TempData["Success"] != null)
+{
+    <div class="alert alert-success text-center" role="alert">
+        @TempData["Success"]
+    </div>
+}
+    @if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger text-center" role="alert">
+        @TempData["Error"]
+    </div>
+}
     @if (Model == null || Model.Count == 0)
 {
     <div class="alert alert-info text-center" role="alert">
@@ -247,7 +259,9 @@ else
         <h3>Cart Summary</h3>
         <p>Total Items: @ViewBag.TotalItems</p>
         <p>Total Price: NPR @((Convert.ToDecimal(ViewBag.TotalPrice) * 133).ToString("N2"))</p>
-        <a href="#" class="btn-checkout">Checkout</a>
+        <form asp-controller="Books" asp-action="Checkout" method="post" class="d-inline">
+            <button type="submit" class="btn-checkout">Checkout</button>
+        </form>
         <a href="@Url.Action("Index", "Books")" class="btn-continue">Continue Shopping</a>
     </div>
 }

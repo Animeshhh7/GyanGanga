@@ -1,0 +1,176 @@
+@model GyanGanga.Web.Models.Views.AdminReportViewModel
+
+@{
+    ViewData["Title"] = "Admin Reports";
+}
+
+<style>
+    /* Ensure the page takes up the full viewport height */
+    .reports-page {
+        min-height: calc(100vh - 50px); /* Adjust for footer height */
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); /* Subtle gradient background */
+        padding: 30px 20px;
+    }
+
+    /* Container for the reports */
+    .reports-container {
+        width: 100%;
+        max-width: 1200px; /* Wider container for better layout */
+        margin: 0 auto;
+    }
+
+    /* Header section */
+    .reports-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+        .reports-header h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+            .reports-header h2::after {
+                content: '';
+                width: 60px;
+                height: 4px;
+                background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green underline */
+                position: absolute;
+                bottom: -10px;
+                left: 50%;
+                transform: translateX(-50%);
+                border-radius: 2px;
+            }
+
+    /* Report sections */
+    .report-sections {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    /* Report card styling */
+    .report-card {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .report-card h3 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .report-card p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .report-card .metric {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #4CAF50; /* Green for admin theme */
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Top-selling books and user activity lists */
+        .report-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .report-card li {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+            .report-card li:last-child {
+                border-bottom: none;
+            }
+
+            .report-card li .highlight {
+                color: #4CAF50;
+                font-weight: 500;
+            }
+</style>
+
+<div class="reports-page">
+    <div class="reports-container">
+        <div class="reports-header">
+            <h2>Admin Reports</h2>
+        </div>
+        <div class="report-sections">
+            <!-- Total Sales -->
+            <div class="report-card">
+                <h3>Total Sales</h3>
+                <p class="metric">NPR @((Model.TotalSales * 133).ToString("N2"))</p>
+            </div>
+
+            <!-- Top Selling Books -->
+            <div class="report-card">
+                <h3>Top Selling Books</h3>
+                @if (Model.TopSellingBooks == null || Model.TopSellingBooks.Count == 0)
+                {
+                <p>No sales data available.</p>
+                }
+                else
+                {
+                <ul>
+                    @foreach (var book in Model.TopSellingBooks)
+                        {
+                    <li>
+                        <span>@book.BookTitle</span>
+                        <span class="highlight">@book.TotalQuantitySold Units Sold</span>
+                    </li>
+                        }
+                </ul>
+                }
+            </div>
+
+            <!-- User Activity -->
+            <div class="report-card">
+                <h3>User Activity</h3>
+                @if (Model.UserActivity == null || Model.UserActivity.Count == 0)
+                {
+                <p>No user activity data available.</p>
+                }
+                else
+                {
+                <ul>
+                    @foreach (var user in Model.UserActivity)
+                        {
+                    <li>
+                        <span>@user.UserEmail</span>
+                        <span class="highlight">@user.OrderCount Orders</span>
+                    </li>
+                        }
+                </ul>
+                }
+            </div>
+        </div>
+    </div>
+</div>

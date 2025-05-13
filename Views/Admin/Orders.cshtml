@@ -1,0 +1,239 @@
+@model List<GyanGanga.Web.Models.Views.AdminOrderViewModel>
+
+    @{
+    ViewData["Title"] = "Manage Orders";
+    }
+
+    <style>
+        /* Ensure the page takes up the full viewport height */
+        .orders-page {
+            min-height: calc(100vh - 50px); /* Adjust for footer height */
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); /* Subtle gradient background */
+            padding: 30px 20px;
+        }
+
+        /* Container for the orders */
+        .orders-container {
+            width: 100%;
+            max-width: 1200px; /* Wider container for better layout of cards */
+            margin: 0 auto;
+        }
+
+        /* Header section */
+        .orders-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+            .orders-header h2 {
+                font-size: 2.2rem;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 20px;
+                position: relative;
+            }
+
+                .orders-header h2::after {
+                    content: '';
+                    width: 60px;
+                    height: 4px;
+                    background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green underline */
+                    position: absolute;
+                    bottom: -10px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    border-radius: 2px;
+                }
+
+        /* No orders message */
+        .alert-info {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        /* Order list styling */
+        .order-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* Order card styling */
+        .order-card {
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+            .order-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            }
+
+            .order-card .order-id {
+                font-size: 1.6rem;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 10px;
+            }
+
+            .order-card .user-info {
+                font-size: 0.95rem;
+                color: #666;
+                margin-bottom: 10px;
+            }
+
+            .order-card .order-date {
+                font-size: 0.95rem;
+                color: #666;
+                margin-bottom: 10px;
+            }
+
+            .order-card .total-price {
+                font-size: 1.2rem;
+                font-weight: 700;
+                color: #4CAF50; /* Green for admin theme */
+                margin-bottom: 15px;
+            }
+
+            .order-card .status {
+                font-size: 0.95rem;
+                font-weight: 500;
+                color: #333;
+                margin-bottom: 15px;
+            }
+
+        /* Order items section */
+        .order-items {
+            margin-top: 15px;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+            .order-items h6 {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 15px;
+            }
+
+            .order-items ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .order-items li {
+                font-size: 0.95rem;
+                color: #666;
+                margin-bottom: 10px;
+                line-height: 1.5;
+            }
+
+        /* Actions (status update) */
+        .order-card .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+            .order-card .actions form {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .order-card .actions select {
+                padding: 8px 15px;
+                border-radius: 8px;
+                border: 1px solid #ddd;
+                font-size: 0.95rem;
+                background-color: #fff;
+                color: #333;
+                transition: border-color 0.3s ease;
+            }
+
+                .order-card .actions select:focus {
+                    border-color: #4CAF50;
+                    outline: none;
+                    box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+                }
+
+            .order-card .actions button {
+                padding: 10px 20px;
+                border-radius: 8px;
+                font-size: 0.95rem;
+                font-weight: 600;
+                color: #ffffff;
+                background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green gradient */
+                border: none;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+
+                .order-card .actions button:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+                }
+    </style>
+
+    <div class="orders-page">
+        <div class="orders-container">
+            <div class="orders-header">
+                <h2>Manage Orders</h2>
+            </div>
+            @if (Model == null || Model.Count == 0)
+        {
+            <div class="alert alert-info" role="alert">
+                No orders found.
+            </div>
+        }
+        else
+        {
+            <div class="order-list">
+                @foreach (var order in Model)
+                {
+                <div class="order-card">
+                    <h5 class="order-id">Order ID: @order.OrderId</h5>
+                    <p class="user-info">User: @order.UserEmail (ID: @order.UserId)</p>
+                    <p class="order-date">Order Date: @order.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+                    <p class="total-price">Total: NPR @((order.TotalPrice * 133).ToString("N2"))</p>
+                    <p class="status">Status: @order.Status</p>
+                    <div class="order-items">
+                        <h6>Order Items:</h6>
+                        <ul>
+                            @foreach (var item in order.OrderItems)
+                                {
+                            <li>@item.BookTitle (ID: @item.BookId) - @item.Quantity x NPR @((item.UnitPrice * 133).ToString("N2"))</li>
+                                }
+                        </ul>
+                    </div>
+                    <div class="actions">
+                        <form asp-action="UpdateOrderStatus" asp-route-orderId="@order.OrderId" method="post">
+                            <select name="status">
+                                <option value="Pending" selected="@(order.Status == "Pending")">Pending</option>
+                                <option value="Shipped" selected="@(order.Status == "Shipped")">Shipped</option>
+                                <option value="Delivered" selected="@(order.Status == "Delivered")">Delivered</option>
+                                <option value="Cancelled" selected="@(order.Status == "Cancelled")">Cancelled</option>
+                            </select>
+                            <button type="submit">Update Status</button>
+                        </form>
+                    </div>
+                </div>
+                }
+            </div>
+        }
+        </div>
+    </div>

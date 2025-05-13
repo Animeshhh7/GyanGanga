@@ -5,143 +5,205 @@
 }
 
 <style>
-    .admin-container {
+    /* Ensure the page takes up the full viewport height */
+    .add-book-page {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 50px); /* Adjust for footer height */
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); /* Subtle gradient background */
         padding: 20px;
-        max-width: 600px;
-        margin: 0 auto;
     }
 
-    .form-container {
+    /* Container for the form */
+    .add-book-container {
+        width: 100%;
+        max-width: 600px; /* Slightly wider to accommodate more fields */
+    }
+
+    /* Card styling for the form */
+    .add-book-card {
         background: #ffffff;
         border-radius: 15px;
-        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-        padding: 30px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        border: none;
+        overflow: hidden; /* Ensure content stays within rounded corners */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
+        .add-book-card:hover {
+            transform: translateY(-5px); /* Slight lift effect on hover */
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Card header for the title */
+        .add-book-card .card-header {
+            background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green gradient matching admin theme */
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+            border-bottom: none;
+        }
+
+        .add-book-card .card-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Card body for the form */
+        .add-book-card .card-body {
+            padding: 30px;
+        }
+
+    /* Form group styling */
     .form-group {
         margin-bottom: 20px;
     }
 
         .form-group label {
-            font-weight: 600;
+            font-weight: 500;
             color: #333;
             margin-bottom: 5px;
             display: block;
         }
 
-        .form-group input, .form-group select {
+        .form-group input,
+        .form-group select {
             width: 100%;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 10px 15px;
+            border-radius: 8px;
             border: 1px solid #ddd;
             font-size: 1rem;
-            transition: all 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-            .form-group input:focus, .form-group select:focus {
-                border-color: #4A90E2;
-                box-shadow: 0 0 8px rgba(74, 144, 226, 0.2);
+            .form-group input:focus,
+            .form-group select:focus {
+                border-color: #4CAF50; /* Green theme for admin */
+                box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
                 outline: none;
             }
 
-    .form-actions {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
+    /* Validation error styling */
+    .text-danger {
+        font-size: 0.85rem;
+        margin-top: 5px;
     }
 
-        .form-actions button, .form-actions a {
-            padding: 10px 20px;
-            border-radius: 25px;
-            border: none;
+    /* Form actions (buttons) */
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+        .form-actions button,
+        .form-actions a {
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
             font-weight: 600;
-            color: #ffffff;
-            transition: all 0.3s ease;
             text-decoration: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .form-actions .btn-submit {
-            background: #4A90E2;
+            background-color: #4CAF50; /* Green theme */
+            border-color: #4CAF50;
+            color: #ffffff;
         }
 
             .form-actions .btn-submit:hover {
-                background: #3A80D2;
-                transform: translateY(-3px);
-                box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+                background-color: #388E3C;
+                border-color: #388E3C;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
             }
 
         .form-actions .btn-cancel {
-            background: #6c757d;
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: #ffffff;
         }
 
             .form-actions .btn-cancel:hover {
-                background: #5a6268;
-                transform: translateY(-3px);
-                box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+                background-color: #5a6268;
+                border-color: #5a6268;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
             }
 </style>
 
-<div class="admin-container">
-    <h2 class="section-title">Add New Book</h2>
-    <div class="form-container">
-        <form asp-action="AddBook" method="post">
-            <div class="form-group">
-                <label asp-for="BookTitle">Title</label>
-                <input asp-for="BookTitle" class="form-control" required />
-                <span asp-validation-for="BookTitle" class="text-danger"></span>
+<div class="add-book-page">
+    <div class="add-book-container">
+        <div class="card add-book-card">
+            <div class="card-header">
+                <h2 class="card-title">Add New Book</h2>
             </div>
-            <div class="form-group">
-                <label asp-for="BookAuthor">Author</label>
-                <input asp-for="BookAuthor" class="form-control" required />
-                <span asp-validation-for="BookAuthor" class="text-danger"></span>
+            <div class="card-body">
+                <form asp-action="AddBook" method="post">
+                    <div class="form-group">
+                        <label asp-for="BookTitle" class="form-label">Book Title</label>
+                        <input asp-for="BookTitle" class="form-control" placeholder="Enter the book title" required />
+                        <span asp-validation-for="BookTitle" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="BookAuthor" class="form-label">Author</label>
+                        <input asp-for="BookAuthor" class="form-control" placeholder="Enter the author's name" required />
+                        <span asp-validation-for="BookAuthor" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="BookGenre" class="form-label">Genre</label>
+                        <select asp-for="BookGenre" class="form-control" required>
+                            <option value="">Select Genre</option>
+                            <option value="Fiction">Fiction</option>
+                            <option value="Non-Fiction">Non-Fiction</option>
+                            <option value="Dystopian">Dystopian</option>
+                            <option value="Mystery">Mystery</option>
+                            <option value="Sci-Fi">Sci-Fi</option>
+                        </select>
+                        <span asp-validation-for="BookGenre" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="BookPrice" class="form-label">Price (USD)</label>
+                        <input asp-for="BookPrice" class="form-control" type="number" step="0.01" placeholder="Enter the price in USD" required />
+                        <span asp-validation-for="BookPrice" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="BookFormat" class="form-label">Format</label>
+                        <select asp-for="BookFormat" class="form-control" required>
+                            <option value="">Select Format</option>
+                            <option value="Hardcover">Hardcover</option>
+                            <option value="Paperback">Paperback</option>
+                            <option value="Ebook">Ebook</option>
+                        </select>
+                        <span asp-validation-for="BookFormat" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="BookStock" class="form-label">Stock</label>
+                        <input asp-for="BookStock" class="form-control" type="number" placeholder="Enter stock quantity" required />
+                        <span asp-validation-for="BookStock" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="BookIsbn" class="form-label">ISBN</label>
+                        <input asp-for="BookIsbn" class="form-control" placeholder="Enter the ISBN" required />
+                        <span asp-validation-for="BookIsbn" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Rating" class="form-label">Rating (0-5)</label>
+                        <input asp-for="Rating" class="form-control" type="number" step="0.1" min="0" max="5" placeholder="Enter the rating (0-5)" required />
+                        <span asp-validation-for="Rating" class="text-danger"></span>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">Add Book</button>
+                        <a href="@Url.Action("Books", "Admin")" class="btn-cancel">Cancel</a>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="BookGenre">Genre</label>
-                <select asp-for="BookGenre" class="form-control" required>
-                    <option value="">Select Genre</option>
-                    <option value="Fiction">Fiction</option>
-                    <option value="Non-Fiction">Non-Fiction</option>
-                    <option value="Dystopian">Dystopian</option>
-                    <option value="Mystery">Mystery</option>
-                    <option value="Sci-Fi">Sci-Fi</option>
-                </select>
-                <span asp-validation-for="BookGenre" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="BookPrice">Price (USD)</label>
-                <input asp-for="BookPrice" class="form-control" type="number" step="0.01" required />
-                <span asp-validation-for="BookPrice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="BookFormat">Format</label>
-                <select asp-for="BookFormat" class="form-control" required>
-                    <option value="">Select Format</option>
-                    <option value="Hardcover">Hardcover</option>
-                    <option value="Paperback">Paperback</option>
-                    <option value="Ebook">Ebook</option>
-                </select>
-                <span asp-validation-for="BookFormat" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="BookStock">Stock</label>
-                <input asp-for="BookStock" class="form-control" type="number" required />
-                <span asp-validation-for="BookStock" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="BookIsbn">ISBN</label>
-                <input asp-for="BookIsbn" class="form-control" required />
-                <span asp-validation-for="BookIsbn" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Rating">Rating</label>
-                <input asp-for="Rating" class="form-control" type="number" step="0.1" min="0" max="5" required />
-                <span asp-validation-for="Rating" class="text-danger"></span>
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="btn-submit">Add Book</button>
-                <a href="@Url.Action("Books", "Admin")" class="btn-cancel">Cancel</a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 

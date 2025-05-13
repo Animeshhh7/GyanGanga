@@ -1,5 +1,6 @@
 using GyanGanga.Web.Data;
 using GyanGanga.Web.Models.Classes;
+using GyanGanga.Web.Models.Views;
 using GyanGanga.Web.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -36,14 +37,13 @@ namespace GyanGanga.Web.Services
             return result;
         }
 
-        public async Task<Book> GetBookEntityById(int id)
+        public async Task<Book?> GetBookEntityById(int id) // Changed to Task<Book?>
         {
             return await _db.BookList.FindAsync(id);
         }
 
         public async Task AddBook(Book book)
         {
-            // Generate a new BookId (simple increment for demo purposes; in a real app, use an auto-incrementing ID)
             var maxId = await _db.BookList.MaxAsync(b => (int?)b.BookId) ?? 0;
             book.BookId = maxId + 1;
             _db.BookList.Add(book);
@@ -73,7 +73,6 @@ namespace GyanGanga.Web.Services
             var book = await _db.BookList.FindAsync(id);
             if (book != null)
             {
-                // Remove associated cart items and bookmarks
                 var cartItems = await _db.CartBooks.Where(c => c.BookId == id).ToListAsync();
                 var bookmarks = await _db.Bookmarks.Where(b => b.BookId == id).ToListAsync();
                 if (cartItems.Any()) _db.CartBooks.RemoveRange(cartItems);
@@ -230,7 +229,6 @@ namespace GyanGanga.Web.Services
             return result;
         }
 
-        // Admin-specific methods
         public async Task<List<(CartBook CartItem, Book Book)>> GetAllCartItems()
         {
             var cartItemsQuery = _db.CartBooks;
@@ -248,6 +246,194 @@ namespace GyanGanga.Web.Services
             if (cartItems.Any()) _db.CartBooks.RemoveRange(cartItems);
             if (bookmarks.Any()) _db.Bookmarks.RemoveRange(bookmarks);
             await _db.SaveChangesAsync();
+        }
+
+        public async Task CreateOrder(string userId, List<ShowBook> cartItems)
+        {
+            if (cartItems == null || !cartItems.Any()) return;
+
+            var order = new Order
+            {
+                UserId = userId,
+                OrderDate = DateTime.UtcNow,
+                TotalPrice = cartItems.Sum(item => item.Quantity * item.BookPrice),
+                Status = "Pending"
+            };
+
+            var maxOrderId = await _db.Orders.MaxAsync(o => (int?)o.OrderId) ?? 0;
+            order.OrderId = maxOrderId + 1;
+
+            _db.Orders.Add(order);
+            await _db.SaveChangesAsync();
+
+            foreach (var item in cartItems)
+            {
+                var orderItem = new OrderItem
+                {
+                    OrderId = order.OrderId,
+                    BookId = item.BookId,
+                    Quantity = item.Quantity,
+                    UnitPrice = item.BookPrice
+                };
+                _db.OrderItems.Add(orderItem);
+            }
+
+            var userCartItems = await _db.CartBooks.Where(c => c.UserId == userId).ToListAsync();
+            if (userCartItems.Any()) _db.CartBooks.RemoveRange(userCartItems);
+
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task<List<AdminOrderViewModel>> GetAllOrders()
+        {
+            var orders = await _db.Orders
+                .Join(_db.Users,
+                    o => o.UserId,
+                    u => u.Id,
+                    (o, u) => new { Order = o, User = u })
+                .ToListAsync();
+
+            var orderViewModels = new List<AdminOrderViewModel>();
+            foreach (var order in orders)
+            {
+                var orderItems = await _db.OrderItems
+                    .Where(oi => oi.OrderId == order.Order.OrderId)
+                    .Join(_db.BookList,
+                        oi => oi.BookId,
+                        b => b.BookId,
+                        (oi, b) => new OrderItemViewModel
+                        {
+                            BookId = oi.BookId,
+                            BookTitle = b.BookTitle ?? "",
+                            Quantity = oi.Quantity,
+                            UnitPrice = oi.UnitPrice
+                        })
+                    .ToListAsync();
+
+                orderViewModels.Add(new AdminOrderViewModel
+                {
+                    OrderId = order.Order.OrderId,
+                    UserId = order.Order.UserId,
+                    UserEmail = order.User.Email,
+                    OrderDate = order.Order.OrderDate,
+                    TotalPrice = order.Order.TotalPrice,
+                    Status = order.Order.Status,
+                    OrderItems = orderItems
+                });
+            }
+
+            return orderViewModels;
+        }
+
+        public async Task UpdateOrderStatus(int orderId, string status)
+        {
+            var order = await _db.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
+            if (order != null)
+            {
+                order.Status = status;
+                _db.Orders.Update(order);
+                await _db.SaveChangesAsync();
+            }
+        }
+
+        public async Task<List<Announcement>> GetAllAnnouncements()
+        {
+            return await _db.Announcements.OrderByDescending(a => a.PostedDate).ToListAsync();
+        }
+
+        public async Task AddAnnouncement(Announcement announcement)
+        {
+            var maxId = await _db.Announcements.MaxAsync(a => (int?)a.AnnouncementId) ?? 0;
+            announcement.AnnouncementId = maxId + 1;
+            announcement.PostedDate = DateTime.UtcNow;
+            _db.Announcements.Add(announcement);
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task UpdateAnnouncement(Announcement announcement)
+        {
+            var existingAnnouncement = await _db.Announcements.FindAsync(announcement.AnnouncementId);
+            if (existingAnnouncement != null)
+            {
+                existingAnnouncement.Title = announcement.Title;
+                existingAnnouncement.Content = announcement.Content;
+                existingAnnouncement.IsActive = announcement.IsActive;
+                _db.Announcements.Update(existingAnnouncement);
+                await _db.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteAnnouncement(int announcementId)
+        {
+            var announcement = await _db.Announcements.FindAsync(announcementId);
+            if (announcement != null)
+            {
+                _db.Announcements.Remove(announcement);
+                await _db.SaveChangesAsync();
+            }
+        }
+
+        public async Task<AdminReportViewModel> GenerateAdminReport()
+        {
+            var report = new AdminReportViewModel();
+
+            // Total Sales, Orders, and Users
+            var orders = await _db.Orders.ToListAsync();
+            report.TotalSales = orders.Sum(o => o.TotalPrice);
+            report.TotalOrders = orders.Count;
+            report.TotalUsers = await _db.Users.CountAsync();
+
+            // Fetch all books to map BookId to BookTitle
+            var books = await _db.BookList.ToDictionaryAsync(b => b.BookId, b => b.BookTitle);
+
+            // Top Selling Books
+            var topSellingBooksQuery = await _db.OrderItems
+                .GroupBy(oi => oi.BookId)
+                .Select(g => new
+                {
+                    BookId = g.Key,
+                    TotalQuantitySold = g.Sum(oi => oi.Quantity),
+                    TotalRevenue = g.Sum(oi => oi.Quantity * oi.UnitPrice)
+                })
+                .OrderByDescending(tsb => tsb.TotalQuantitySold)
+                .Take(5)
+                .ToListAsync();
+
+            var topSellingBooks = topSellingBooksQuery.Select(tsb => new TopSellingBook
+            {
+                BookId = tsb.BookId,
+                BookTitle = books.ContainsKey(tsb.BookId) ? books[tsb.BookId] : "Unknown",
+                TotalQuantitySold = tsb.TotalQuantitySold,
+                TotalRevenue = tsb.TotalRevenue
+            }).ToList();
+
+            report.TopSellingBooks = topSellingBooks;
+
+            // Fetch all users to map UserId to UserEmail
+            var users = await _db.Users.ToDictionaryAsync(u => u.Id, u => u.Email);
+
+            // User Activity
+            var userActivityQuery = await _db.Orders
+                .GroupBy(o => o.UserId)
+                .Select(g => new
+                {
+                    UserId = g.Key,
+                    OrderCount = g.Count()
+                })
+                .OrderByDescending(ua => ua.OrderCount)
+                .Take(5)
+                .ToListAsync();
+
+            var userActivity = userActivityQuery.Select(ua => new UserActivity
+            {
+                UserId = ua.UserId,
+                UserEmail = users.ContainsKey(ua.UserId) ? users[ua.UserId] : "Unknown",
+                OrderCount = ua.OrderCount
+            }).ToList();
+
+            report.UserActivity = userActivity;
+
+            return report;
         }
     }
 }

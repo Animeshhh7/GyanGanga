@@ -1,9 +1,10 @@
 namespace GyanGanga.Web.Models.Classes
 {
-    public class CartBook
+    public class OrderItem
     {
+        public int OrderId { get; set; }
         public int BookId { get; set; }
-        public string? UserId { get; set; }
         public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
     }
 }

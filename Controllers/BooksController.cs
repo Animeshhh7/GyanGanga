@@ -22,7 +22,6 @@ namespace GyanGanga.Web.Controllers
             const int pageSize = 5;
             var booksQuery = await _bookHelper.GetAllBooks();
 
-            // Search by title, author, or ISBN
             if (!string.IsNullOrEmpty(search))
             {
                 search = search.ToLower();
@@ -32,19 +31,16 @@ namespace GyanGanga.Web.Controllers
                     (!string.IsNullOrEmpty(b.BookIsbn) && b.BookIsbn.ToLower().Contains(search))).ToList();
             }
 
-            // Filter by genre
             if (!string.IsNullOrEmpty(genre))
             {
                 booksQuery = booksQuery.Where(b => b.BookGenre == genre).ToList();
             }
 
-            // Filter by format
             if (!string.IsNullOrEmpty(format))
             {
                 booksQuery = booksQuery.Where(b => b.BookFormat == format).ToList();
             }
 
-            // Filter by price range
             if (minPrice.HasValue)
             {
                 booksQuery = booksQuery.Where(b => b.BookPrice >= minPrice.Value).ToList();
@@ -54,7 +50,6 @@ namespace GyanGanga.Web.Controllers
                 booksQuery = booksQuery.Where(b => b.BookPrice <= maxPrice.Value).ToList();
             }
 
-            // Sorting
             switch (sort)
             {
                 case "title_asc":
@@ -77,13 +72,11 @@ namespace GyanGanga.Web.Controllers
                     break;
             }
 
-            // Pagination
             var totalBooks = booksQuery.Count;
             var totalPages = (int)Math.Ceiling((double)totalBooks / pageSize);
             page = Math.Max(1, Math.Min(page, totalPages));
             var books = booksQuery.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
-            // Check bookmark status for each book
             var userId = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (userId != null)
             {
@@ -93,7 +86,6 @@ namespace GyanGanga.Web.Controllers
                 }
             }
 
-            // Pass filter, sort, and pagination values to the view
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
             ViewBag.Search = search;
@@ -222,6 +214,28 @@ namespace GyanGanga.Web.Controllers
             ViewBag.TotalItems = cartBooks.Sum(b => b.Quantity);
             ViewBag.TotalPrice = cartBooks.Sum(b => b.Quantity * b.BookPrice);
             return View(cartBooks);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Checkout()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var cartBooks = await _bookHelper.GetCartBooks(userId);
+            if (cartBooks == null || !cartBooks.Any())
+            {
+                TempData["Error"] = "Your cart is empty.";
+                return RedirectToAction("Cart");
+            }
+
+            await _bookHelper.CreateOrder(userId, cartBooks);
+            TempData["Success"] = "Order placed successfully!";
+            return RedirectToAction("Cart");
         }
     }
 }

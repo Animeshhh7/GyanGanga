@@ -1,54 +1,194 @@
-@model GyanGanga.Web.Models.Account.RegisterViewModel 
-<div class="row justify-content-center"> 
-    <div class="col-md-6"> 
-        <div class="card"> 
-            <div class="card-body"> 
-                <h2 class="card-title text-center mb-4">Register</h2> 
-                <form asp-action="Register" method="post"> 
-                    @if (!ViewData.ModelState.IsValid) { 
-                        <div class="alert alert-danger" role="alert"> 
-                            @Html.ValidationSummary(true) 
-                        </div> 
-                    } 
-                    <div class="mb-3"> 
-                        <label asp-for="FirstName" class="form-label"></label> 
-                        <input asp-for="FirstName" class="form-control" /> 
-                        <span asp-validation-for="FirstName" class="text-danger"></span> 
-                    </div> 
-                    <div class="mb-3"> 
-                        <label asp-for="LastName" class="form-label"></label> 
-                        <input asp-for="LastName" class="form-control" /> 
-                        <span asp-validation-for="LastName" class="text-danger"></span> 
-                    </div> 
-                    <div class="mb-3"> 
-                        <label asp-for="Email" class="form-label"></label> 
-                        <input asp-for="Email" class="form-control" /> 
-                        <span asp-validation-for="Email" class="text-danger"></span> 
-                    </div> 
-                    <div class="mb-3"> 
-                        <label asp-for="PhoneNumber" class="form-label"></label> 
-                        <input asp-for="PhoneNumber" class="form-control" /> 
-                        <span asp-validation-for="PhoneNumber" class="text-danger"></span> 
-                    </div> 
-                    <div class="mb-3"> 
-                        <label asp-for="Password" class="form-label"></label> 
-                        <input asp-for="Password" class="form-control" /> 
-                        <span asp-validation-for="Password" class="text-danger"></span> 
-                    </div> 
-                    <div class="d-grid"> 
-                        <button type="submit" class="btn btn-primary">Register</button> 
-                    </div> 
-                    <div class="text-center mt-3"> 
-                        <p>Already have an account? <a href="@Url.Action("Login", "Account")">Login here</a></p> 
-                    </div> 
-                </form> 
-            </div> 
-        </div> 
-    </div> 
-</div> 
-@section Scripts { 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
-    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script> 
-    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/additional-methods.min.js"></script> 
-    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@4.0.0/dist/jquery.validate.unobtrusive.min.js"></script> 
-} 
+@model GyanGanga.Web.Models.Account.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<style>
+    /* Ensure the register page takes up the full viewport height */
+    .register-page {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 50px); /* Adjust for footer height */
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); /* Subtle gradient background */
+        padding: 20px;
+    }
+
+    /* Container for the register form */
+    .register-container {
+        width: 100%;
+        max-width: 450px; /* Consistent with Login page */
+    }
+
+    /* Card styling for the register form */
+    .register-card {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        border: none;
+        overflow: hidden; /* Ensure content stays within rounded corners */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .register-card:hover {
+            transform: translateY(-5px); /* Slight lift effect on hover */
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Card header for the title */
+        .register-card .card-header {
+            background: linear-gradient(90deg, #4A90E2 0%, #3A80D2 100%); /* Blue gradient matching user theme */
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+            border-bottom: none;
+        }
+
+        .register-card .card-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Card body for the form */
+        .register-card .card-body {
+            padding: 30px;
+        }
+
+    /* Form group styling */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .form-group input:focus {
+                border-color: #4A90E2; /* Blue theme */
+                box-shadow: 0 0 8px rgba(74, 144, 226, 0.2);
+                outline: none;
+            }
+
+    /* Validation error styling */
+    .text-danger {
+        font-size: 0.85rem;
+        margin-top: 5px;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+    }
+
+    /* Submit button styling */
+    .btn-primary {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+        }
+
+    /* Login link section */
+    .login-link {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+        .login-link a {
+            color: #4A90E2;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+            .login-link a:hover {
+                color: #3A80D2;
+                text-decoration: underline;
+            }
+</style>
+
+<div class="register-page">
+    <div class="register-container">
+        <div class="card register-card">
+            <div class="card-header">
+                <h2 class="card-title">Register with Gyan Ganga</h2>
+            </div>
+            <div class="card-body">
+                <form asp-action="Register" method="post">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                    <div class="alert alert-danger" role="alert">
+                        @Html.ValidationSummary(true)
+                    </div>
+                    }
+                    <div class="form-group">
+                        <label asp-for="FirstName" class="form-label">First Name</label>
+                        <input asp-for="FirstName" class="form-control" placeholder="Enter your first name" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="LastName" class="form-label">Last Name</label>
+                        <input asp-for="LastName" class="form-control" placeholder="Enter your last name" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Email" class="form-label">Email Address</label>
+                        <input asp-for="Email" class="form-control" placeholder="Enter your email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="Enter your phone number" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Password" class="form-label">Password</label>
+                        <input asp-for="Password" class="form-control" placeholder="Create a password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </div>
+                    <div class="login-link">
+                        <p>Already have an account? <a href="@Url.Action("Login", "Account")">Login here</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/additional-methods.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@4.0.0/dist/jquery.validate.unobtrusive.min.js"></script>
+}

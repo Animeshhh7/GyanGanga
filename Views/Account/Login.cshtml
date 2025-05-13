@@ -1,39 +1,179 @@
-@model GyanGanga.Web.Models.Account.LoginViewModel 
-<div class="row justify-content-center"> 
-    <div class="col-md-6"> 
-        <div class="card"> 
-            <div class="card-body"> 
-                <h2 class="card-title text-center mb-4">Login</h2> 
-                <form asp-action="Login" method="post"> 
-                    @if (!ViewData.ModelState.IsValid) { 
-                        <div class="alert alert-danger" role="alert"> 
-                            @Html.ValidationSummary(true) 
-                        </div> 
-                    } 
-                    <div class="mb-3"> 
-                        <label asp-for="Email" class="form-label"></label> 
-                        <input asp-for="Email" class="form-control" /> 
-                        <span asp-validation-for="Email" class="text-danger"></span> 
-                    </div> 
-                    <div class="mb-3"> 
-                        <label asp-for="Password" class="form-label"></label> 
-                        <input asp-for="Password" class="form-control" /> 
-                        <span asp-validation-for="Password" class="text-danger"></span> 
-                    </div> 
-                    <div class="d-grid"> 
-                        <button type="submit" class="btn btn-primary">Login</button> 
-                    </div> 
-                    <div class="text-center mt-3"> 
-                        <p>Don't have an account? <a href="@Url.Action("Register", "Account")">Register here</a></p> 
-                    </div> 
-                </form> 
-            </div> 
-        </div> 
-    </div> 
-</div> 
-@section Scripts { 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
-    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script> 
-    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/additional-methods.min.js"></script> 
-    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@4.0.0/dist/jquery.validate.unobtrusive.min.js"></script> 
-} 
+@model GyanGanga.Web.Models.Account.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<style>
+    /* Ensure the login page takes up the full viewport height */
+    .login-page {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 50px); /* Adjust for footer height */
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); /* Subtle gradient background */
+        padding: 20px;
+    }
+
+    /* Container for the login form */
+    .login-container {
+        width: 100%;
+        max-width: 450px; /* Slightly wider for better spacing */
+    }
+
+    /* Card styling for the login form */
+    .login-card {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        border: none;
+        overflow: hidden; /* Ensure content stays within rounded corners */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .login-card:hover {
+            transform: translateY(-5px); /* Slight lift effect on hover */
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Card header for the title */
+        .login-card .card-header {
+            background: linear-gradient(90deg, #4A90E2 0%, #3A80D2 100%); /* Blue gradient matching user theme */
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+            border-bottom: none;
+        }
+
+        .login-card .card-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Card body for the form */
+        .login-card .card-body {
+            padding: 30px;
+        }
+
+    /* Form group styling */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .form-group input:focus {
+                border-color: #4A90E2; /* Blue theme */
+                box-shadow: 0 0 8px rgba(74, 144, 226, 0.2);
+                outline: none;
+            }
+
+    /* Validation error styling */
+    .text-danger {
+        font-size: 0.85rem;
+        margin-top: 5px;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+    }
+
+    /* Submit button styling */
+    .btn-primary {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+        }
+
+    /* Register link section */
+    .register-link {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+        .register-link a {
+            color: #4A90E2;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+            .register-link a:hover {
+                color: #3A80D2;
+                text-decoration: underline;
+            }
+</style>
+
+<div class="login-page">
+    <div class="login-container">
+        <div class="card login-card">
+            <div class="card-header">
+                <h2 class="card-title">Login to Gyan Ganga</h2>
+            </div>
+            <div class="card-body">
+                <form asp-action="Login" method="post">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                    <div class="alert alert-danger" role="alert">
+                        @Html.ValidationSummary(true)
+                    </div>
+                    }
+                    <div class="form-group">
+                        <label asp-for="Email" class="form-label">Email Address</label>
+                        <input asp-for="Email" class="form-control" placeholder="Enter your email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Password" class="form-label">Password</label>
+                        <input asp-for="Password" class="form-control" placeholder="Enter your password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                    <div class="register-link">
+                        <p>Don't have an account? <a href="@Url.Action("Register", "Account")">Register here</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/additional-methods.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@4.0.0/dist/jquery.validate.unobtrusive.min.js"></script>
+}

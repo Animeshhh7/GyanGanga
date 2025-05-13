@@ -1,7 +1,8 @@
+using GyanGanga.Web.Data; // Added
 using GyanGanga.Web.Models;
 using GyanGanga.Web.Models.Classes;
 using GyanGanga.Web.Models.Identity;
-using GyanGanga.Web.Models.Views; // For AdminUserViewModel
+using GyanGanga.Web.Models.Views;
 using GyanGanga.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,14 +18,15 @@ namespace GyanGanga.Web.Controllers
     {
         private readonly IBookHelper _bookHelper;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly MyDB _db;
 
-        public AdminController(IBookHelper bookHelper, UserManager<ApplicationUser> userManager)
+        public AdminController(IBookHelper bookHelper, UserManager<ApplicationUser> userManager, MyDB db)
         {
             _bookHelper = bookHelper;
             _userManager = userManager;
+            _db = db;
         }
 
-        // Admin Dashboard
         public async Task<IActionResult> Index()
         {
             var books = await _bookHelper.GetAllBooks();
@@ -38,20 +40,17 @@ namespace GyanGanga.Web.Controllers
             return View();
         }
 
-        // Book Management: List Books
         public async Task<IActionResult> Books()
         {
             var books = await _bookHelper.GetAllBooks();
             return View(books);
         }
 
-        // Book Management: Add Book (GET)
         public IActionResult AddBook()
         {
             return View();
         }
 
-        // Book Management: Add Book (POST)
         [HttpPost]
         public async Task<IActionResult> AddBook(Book book)
         {
@@ -63,7 +62,6 @@ namespace GyanGanga.Web.Controllers
             return View(book);
         }
 
-        // Book Management: Edit Book (GET)
         public async Task<IActionResult> EditBook(int id)
         {
             var book = await _bookHelper.GetBookEntityById(id);
@@ -74,7 +72,6 @@ namespace GyanGanga.Web.Controllers
             return View(book);
         }
 
-        // Book Management: Edit Book (POST)
         [HttpPost]
         public async Task<IActionResult> EditBook(Book book)
         {
@@ -86,7 +83,6 @@ namespace GyanGanga.Web.Controllers
             return View(book);
         }
 
-        // Book Management: Delete Book
         [HttpPost]
         public async Task<IActionResult> DeleteBook(int id)
         {
@@ -94,7 +90,6 @@ namespace GyanGanga.Web.Controllers
             return RedirectToAction("Books");
         }
 
-        // User Management: List Users
         public async Task<IActionResult> Users()
         {
             var users = await _userManager.Users.ToListAsync();
@@ -103,7 +98,7 @@ namespace GyanGanga.Web.Controllers
             foreach (var user in users)
             {
                 var roles = await _userManager.GetRolesAsync(user);
-                var role = roles.FirstOrDefault() ?? "User"; // Default to "User" if no role
+                var role = roles.FirstOrDefault() ?? "User";
                 userViewModels.Add(new AdminUserViewModel
                 {
                     Id = user.Id,
@@ -116,7 +111,6 @@ namespace GyanGanga.Web.Controllers
             return View(userViewModels);
         }
 
-        // User Management: Delete User
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
         {
@@ -129,19 +123,86 @@ namespace GyanGanga.Web.Controllers
             return RedirectToAction("Users");
         }
 
-        // Cart Management: List All Cart Items
         public async Task<IActionResult> Carts()
         {
             var cartItems = await _bookHelper.GetAllCartItems();
             return View(cartItems);
         }
 
-        // Cart Management: Delete Cart Item
         [HttpPost]
         public async Task<IActionResult> DeleteCartItem(int bookId, string userId)
         {
             await _bookHelper.RemoveFromCart(bookId, userId);
             return RedirectToAction("Carts");
+        }
+
+        public async Task<IActionResult> Orders()
+        {
+            var orders = await _bookHelper.GetAllOrders();
+            return View(orders);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateOrderStatus(int orderId, string status)
+        {
+            await _bookHelper.UpdateOrderStatus(orderId, status);
+            return RedirectToAction("Orders");
+        }
+
+        public async Task<IActionResult> Announcements()
+        {
+            var announcements = await _bookHelper.GetAllAnnouncements();
+            return View(announcements);
+        }
+
+        public IActionResult CreateAnnouncement()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAnnouncement(Announcement announcement)
+        {
+            if (ModelState.IsValid)
+            {
+                await _bookHelper.AddAnnouncement(announcement);
+                return RedirectToAction("Announcements");
+            }
+            return View(announcement);
+        }
+
+        public async Task<IActionResult> EditAnnouncement(int id)
+        {
+            var announcement = await _db.Announcements.FindAsync(id);
+            if (announcement == null)
+            {
+                return NotFound();
+            }
+            return View(announcement);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditAnnouncement(Announcement announcement)
+        {
+            if (ModelState.IsValid)
+            {
+                await _bookHelper.UpdateAnnouncement(announcement);
+                return RedirectToAction("Announcements");
+            }
+            return View(announcement);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteAnnouncement(int id)
+        {
+            await _bookHelper.DeleteAnnouncement(id);
+            return RedirectToAction("Announcements");
+        }
+
+        public async Task<IActionResult> Reports()
+        {
+            var report = await _bookHelper.GenerateAdminReport();
+            return View(report);
         }
     }
 }

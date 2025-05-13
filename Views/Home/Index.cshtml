@@ -1,298 +1,309 @@
-@model List<GyanGanga.Web.Models.Classes.ShowBook>
+@inject GyanGanga.Web.Services.Interfaces.IBookHelper BookHelper
 
-    <style>
-        /* Modern Hero Section */
-        .hero-section {
-            position: relative;
-            width: 100%;
-            height: 70vh;
-            background: linear-gradient(135deg, rgba(74, 144, 226, 0.85), rgba(58, 128, 210, 0.85)), url('https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: #ffffff;
-            margin-bottom: 60px;
-            border-radius: 0 0 25px 25px;
-            box-shadow: 0 12px 25px rgba(0,0,0,0.25);
-        }
+@{
+    ViewData["Title"] = "Gyan Ganga - Online Bookstore";
+    var announcements = await BookHelper.GetAllAnnouncements();
+    var activeAnnouncements = announcements.Where(a => a.IsActive).ToList();
+}
 
-            .hero-section h1 {
-                font-size: 4.5rem;
-                font-weight: 800;
-                margin-bottom: 20px;
-                text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
-                animation: fadeInDown 1s ease-out;
-            }
+<style>
+    /* Announcement Section */
+    .announcement-section {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 40px;
+    }
 
-            .hero-section p {
-                font-size: 1.9rem;
-                font-weight: 300;
-                margin-bottom: 35px;
-                opacity: 0.9;
-                animation: fadeInUp 1s ease-out 0.3s;
-                animation-fill-mode: both;
-            }
-
-            .hero-section .btn-primary {
-                font-size: 1.4rem;
-                padding: 15px 45px;
-                border-radius: 30px;
-                background: #ffffff;
-                color: #4A90E2;
-                border: none;
-                font-weight: 600;
-                transition: all 0.3s ease;
-                animation: fadeInUp 1s ease-out 0.6s;
-                animation-fill-mode: both;
-            }
-
-                .hero-section .btn-primary:hover {
-                    background: #4A90E2;
-                    color: #ffffff;
-                    transform: translateY(-5px);
-                    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-                }
-
-        /* Animations */
-        @@keyframes fadeInDown {
-            0% {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @@keyframes fadeInUp {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Section Titles */
-        .section-title {
-            font-size: 3rem;
-            font-weight: 700;
+        .announcement-section h2 {
+            font-size: 2rem;
+            font-weight: 600;
             color: #333;
-            margin: 60px 0 30px;
+            margin-bottom: 20px;
             text-align: center;
-            position: relative;
         }
 
-            .section-title::before {
-                content: '';
-                width: 90px;
-                height: 5px;
-                background: linear-gradient(90deg, #4A90E2, #3A80D2);
-                position: absolute;
-                bottom: -15px;
-                left: 50%;
-                transform: translateX(-50%);
-                border-radius: 5px;
-            }
+    .announcement-card {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+    }
 
-        /* Modern Book Card */
-        .book-card {
-            position: relative;
-            background: #ffffff;
-            border-radius: 20px;
-            overflow: hidden;
+        .announcement-card:hover {
+            transform: translateY(-5px);
             box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            margin-bottom: 40px;
-            height: 100%;
-            border: 1px solid rgba(0,0,0,0.05);
         }
 
-            .book-card:hover {
-                transform: translateY(-10px);
-                box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-            }
+        .announcement-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
 
-            .book-card img {
-                width: 100%;
-                height: 320px;
-                object-fit: cover;
-                transition: transform 0.3s ease;
-            }
+        .announcement-card p {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
 
-            .book-card:hover img {
-                transform: scale(1.08);
-            }
+        .announcement-card .posted-date {
+            font-size: 0.9rem;
+            color: #999;
+        }
 
-            .book-card .card-body {
-                padding: 25px;
-                text-align: center;
-                background: rgba(255,255,255,0.95);
-                backdrop-filter: blur(8px); /* Glassmorphism effect */
-            }
+    /* Section Titles */
+    .section-title {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #333;
+        margin: 60px 0 30px;
+        text-align: center;
+        position: relative;
+    }
 
-            .book-card .card-title {
-                font-size: 1.5rem;
-                font-weight: 600;
-                color: #333;
-                margin-bottom: 10px;
-                height: 48px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
-            }
+        .section-title::before {
+            content: '';
+            width: 90px;
+            height: 5px;
+            background: linear-gradient(90deg, #4A90E2, #3A80D2);
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 5px;
+        }
 
-            .book-card .card-author {
-                font-size: 1rem;
-                color: #666;
-                margin-bottom: 10px;
-            }
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, #4A90E2 0%, #3A80D2 100%);
+        color: #ffffff;
+        padding: 80px 0;
+        text-align: center;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        margin-bottom: 60px;
+        position: relative;
+        overflow: hidden;
+    }
 
-            .book-card .rating {
-                margin-bottom: 10px;
-                color: #f39c12;
-                font-size: 1.1rem;
-            }
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
 
-            .book-card .price {
-                font-size: 1.4rem;
-                font-weight: 700;
-                color: #4A90E2;
-                margin-bottom: 15px;
-            }
+        .hero-section p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
 
-            .book-card .action-buttons {
-                display: flex;
-                justify-content: center;
-                gap: 15px;
-            }
+        .hero-section .btn-primary {
+            padding: 15px 30px;
+            border-radius: 25px;
+            background: #ffffff;
+            color: #4A90E2;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
 
-            .book-card .btn-icon {
-                font-size: 1rem;
-                padding: 10px;
-                border-radius: 50%;
+            .hero-section .btn-primary:hover {
                 background: #f8f9fa;
-                border: 1px solid #ddd;
-                color: #4A90E2;
-                transition: all 0.3s ease;
+                color: #3A80D2;
+                transform: translateY(-5px);
+                box-shadow: 0 6px 15px rgba(0,0,0,0.3);
             }
 
-                .book-card .btn-icon:hover {
-                    background: #4A90E2;
-                    color: #ffffff;
-                    transform: scale(1.1);
-                    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-                }
-    </style>
+    /* Featured Books */
+    .book-card {
+        position: relative;
+        background: #ffffff;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 40px;
+        height: 100%;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
 
-    <!-- Modern Hero Section -->
-    <div class="hero-section">
-        <h1>Discover Your Next Read</h1>
-        <p>Explore a Vast Collection of Books at Gyaan Ganga</p>
-        <a href="@Url.Action("Index", "Books")" class="btn btn-primary">Shop Now</a>
+        .book-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+        }
+
+        .book-card img {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .book-card:hover img {
+            transform: scale(1.08);
+        }
+
+        .book-card .card-body {
+            padding: 25px;
+            text-align: center;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(8px);
+        }
+
+        .book-card .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            height: 48px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .book-card .card-author {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .book-card .rating {
+            margin-bottom: 10px;
+            color: #f39c12;
+            font-size: 1.1rem;
+        }
+
+        .book-card .price {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #4A90E2;
+            margin-bottom: 15px;
+        }
+
+        .book-card .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .book-card .btn-icon {
+            font-size: 1rem;
+            padding: 10px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            color: #4A90E2;
+            transition: all 0.3s ease;
+        }
+
+            .book-card .btn-icon:hover {
+                background: #4A90E2;
+                color: #ffffff;
+                transform: scale(1.1);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            }
+</style>
+
+<!-- Announcements Section -->
+@if (activeAnnouncements.Any())
+{
+<div class="announcement-section">
+    <h2>Announcements</h2>
+    @foreach (var announcement in activeAnnouncements)
+        {
+    <div class="announcement-card">
+        <h3>@announcement.Title</h3>
+        <p>@announcement.Content</p>
+        <p class="posted-date">Posted: @announcement.PostedDate.ToString("dd/MM/yyyy")</p>
     </div>
+        }
+</div>
+}
 
-    <!-- Bestsellers Section -->
-    <h2 class="section-title">Bestsellers</h2>
-    <div class="row">
-        @foreach (var book in Model.Take(3))
-    {
-        <div class="col-md-4">
-            <div class="book-card">
-                <img src="https://via.placeholder.com/300x320?text=@(book.BookTitle)" class="card-img-top" alt="@(book.BookTitle)">
-                <div class="card-body">
-                    <h5 class="card-title">@book.BookTitle</h5>
-                    <p class="card-author">@book.BookAuthor</p>
-                    <div class="rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                        <span>(4.5)</span>
-                    </div>
-                    <p class="price">NPR @(book.BookPrice * 133).ToString("N2")</p>
-                    <div class="action-buttons">
-                        @if (User?.Identity?.IsAuthenticated == true)
-                        {
-                        <form asp-controller="Books" asp-action="AddToCart" method="post" class="d-inline">
-                            <input type="hidden" name="id" value="@(book.BookId)" />
-                            <input type="hidden" name="quantity" value="1" />
-                            <button type="submit" class="btn-icon" title="Add to Cart"><i class="fas fa-cart-plus"></i></button>
-                        </form>
-                        <form asp-controller="Books" asp-action="Save" method="post" class="d-inline">
-                            <input type="hidden" name="id" value="@(book.BookId)" />
-                            <button type="submit" class="btn-icon" title="Bookmark"><i class="fas fa-bookmark"></i></button>
-                        </form>
-                        }
-                        else
-                        {
-                        <a href="@Url.Action("Login", "Account")" class="btn-icon" title="Add to Cart"><i class="fas fa-cart-plus"></i></a>
-                        <a href="@Url.Action("Login", "Account")" class="btn-icon" title="Bookmark"><i class="fas fa-bookmark"></i></a>
-                        }
-                    </div>
+<!-- Hero Section -->
+<div class="hero-section">
+    <h1>Welcome to Gyan Ganga</h1>
+    <p>Discover a world of knowledge with our extensive collection of books.</p>
+    <a href="@Url.Action("Index", "Books")" class="btn btn-primary">Explore Books</a>
+</div>
+
+<!-- Featured Books -->
+<h2 class="section-title">Featured Books</h2>
+<div class="row">
+    <div class="col-md-4">
+        <div class="book-card">
+            <img src="https://via.placeholder.com/300x320?text=The+Great+Gatsby" class="card-img-top" alt="The Great Gatsby">
+            <div class="card-body">
+                <h5 class="card-title">The Great Gatsby</h5>
+                <p class="card-author">F. Scott Fitzgerald</p>
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span>(4.5)</span>
+                </div>
+                <p class="price">NPR 665.00</p>
+                <div class="action-buttons">
+                    <a href="@Url.Action("Details", "Books", new { id = 1 })" class="btn-icon" title="View Details"><i class="fas fa-eye"></i></a>
                 </div>
             </div>
         </div>
-    }
     </div>
-
-    <!-- New Arrivals Section -->
-    <h2 class="section-title">New Arrivals</h2>
-    <div class="row">
-        @foreach (var book in Model.Take(3))
-    {
-        <div class="col-md-4">
-            <div class="book-card">
-                <img src="https://via.placeholder.com/300x320?text=@(book.BookTitle)" class="card-img-top" alt="@(book.BookTitle)">
-                <div class="card-body">
-                    <h5 class="card-title">@book.BookTitle</h5>
-                    <p class="card-author">@book.BookAuthor</p>
-                    <div class="rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                        <span>(4.5)</span>
-                    </div>
-                    <p class="price">NPR @(book.BookPrice * 133).ToString("N2")</p>
-                    <div class="action-buttons">
-                        @if (User?.Identity?.IsAuthenticated == true)
-                        {
-                        <form asp-controller="Books" asp-action="AddToCart" method="post" class="d-inline">
-                            <input type="hidden" name="id" value="@(book.BookId)" />
-                            <input type="hidden" name="quantity" value="1" />
-                            <button type="submit" class="btn-icon" title="Add to Cart"><i class="fas fa-cart-plus"></i></button>
-                        </form>
-                        <form asp-controller="Books" asp-action="Save" method="post" class="d-inline">
-                            <input type="hidden" name="id" value="@(book.BookId)" />
-                            <button type="submit" class="btn-icon" title="Bookmark"><i class="fas fa-bookmark"></i></button>
-                        </form>
-                        }
-                        else
-                        {
-                        <a href="@Url.Action("Login", "Account")" class="btn-icon" title="Add to Cart"><i class="fas fa-cart-plus"></i></a>
-                        <a href="@Url.Action("Login", "Account")" class="btn-icon" title="Bookmark"><i class="fas fa-bookmark"></i></a>
-                        }
-                    </div>
+    <div class="col-md-4">
+        <div class="book-card">
+            <img src="https://via.placeholder.com/300x320?text=Sapiens" class="card-img-top" alt="Sapiens">
+            <div class="card-body">
+                <h5 class="card-title">Sapiens</h5>
+                <p class="card-author">Yuval Noah Harari</p>
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <span>(5.0)</span>
+                </div>
+                <p class="price">NPR 1330.00</p>
+                <div class="action-buttons">
+                    <a href="@Url.Action("Details", "Books", new { id = 2 })" class="btn-icon" title="View Details"><i class="fas fa-eye"></i></a>
                 </div>
             </div>
         </div>
-    }
     </div>
+    <div class="col-md-4">
+        <div class="book-card">
+            <img src="https://via.placeholder.com/300x320?text=The+Da+Vinci+Code" class="card-img-top" alt="The Da Vinci Code">
+            <div class="card-body">
+                <h5 class="card-title">The Da Vinci Code</h5>
+                <p class="card-author">Dan Brown</p>
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span>(4.8)</span>
+                </div>
+                <p class="price">NPR 798.00</p>
+                <div class="action-buttons">
+                    <a href="@Url.Action("Details", "Books", new { id = 3 })" class="btn-icon" title="View Details"><i class="fas fa-eye"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-    @section Scripts {
-        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    }
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+}

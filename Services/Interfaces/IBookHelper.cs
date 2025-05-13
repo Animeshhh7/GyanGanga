@@ -1,4 +1,5 @@
 using GyanGanga.Web.Models.Classes;
+using GyanGanga.Web.Models.Views;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,7 +8,7 @@ namespace GyanGanga.Web.Services.Interfaces
     public interface IBookHelper
     {
         Task<List<ShowBook>> GetAllBooks();
-        Task<Book> GetBookEntityById(int id);
+        Task<Book?> GetBookEntityById(int id); // Changed to Book?
         Task AddBook(Book book);
         Task UpdateBook(Book book);
         Task DeleteBook(int id);
@@ -22,5 +23,13 @@ namespace GyanGanga.Web.Services.Interfaces
         Task<List<ShowBook>> GetCartBooks(string userId);
         Task<List<(CartBook CartItem, Book Book)>> GetAllCartItems();
         Task RemoveUserCartAndBookmarks(string userId);
+        Task CreateOrder(string userId, List<ShowBook> cartItems);
+        Task<List<AdminOrderViewModel>> GetAllOrders();
+        Task UpdateOrderStatus(int orderId, string status);
+        Task<List<Announcement>> GetAllAnnouncements();
+        Task AddAnnouncement(Announcement announcement);
+        Task UpdateAnnouncement(Announcement announcement);
+        Task DeleteAnnouncement(int announcementId);
+        Task<AdminReportViewModel> GenerateAdminReport();
     }
 }

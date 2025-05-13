@@ -1,0 +1,201 @@
+@model GyanGanga.Web.Models.Classes.Announcement
+
+@{
+    ViewData["Title"] = "Create Announcement";
+}
+
+<style>
+    /* Ensure the page takes up the full viewport height */
+    .announcement-form-page {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 50px); /* Adjust for footer height */
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); /* Subtle gradient background */
+        padding: 20px;
+    }
+
+    /* Container for the form */
+    .announcement-form-container {
+        width: 100%;
+        max-width: 600px; /* Consistent with Add Book page */
+    }
+
+    /* Card styling for the form */
+    .announcement-form-card {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        border: none;
+        overflow: hidden; /* Ensure content stays within rounded corners */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .announcement-form-card:hover {
+            transform: translateY(-5px); /* Slight lift effect on hover */
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Card header for the title */
+        .announcement-form-card .card-header {
+            background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green gradient matching admin theme */
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+            border-bottom: none;
+        }
+
+        .announcement-form-card .card-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Card body for the form */
+        .announcement-form-card .card-body {
+            padding: 30px;
+        }
+
+    /* Form group styling */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .form-group input:focus,
+            .form-group textarea:focus {
+                border-color: #4CAF50; /* Green theme for admin */
+                box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+                outline: none;
+            }
+
+        .form-group textarea {
+            resize: vertical; /* Allow vertical resizing only */
+            min-height: 120px;
+        }
+
+        /* Checkbox styling */
+        .form-group .form-check {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .form-group .form-check-input {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .form-group .form-check-label {
+            font-size: 1rem;
+            color: #666;
+            cursor: pointer;
+        }
+
+    /* Validation error styling */
+    .text-danger {
+        font-size: 0.85rem;
+        margin-top: 5px;
+    }
+
+    /* Form actions (buttons) */
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+        .form-actions button,
+        .form-actions a {
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-actions .btn-submit {
+            background-color: #4CAF50; /* Green theme */
+            border-color: #4CAF50;
+            color: #ffffff;
+        }
+
+            .form-actions .btn-submit:hover {
+                background-color: #388E3C;
+                border-color: #388E3C;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            }
+
+        .form-actions .btn-cancel {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: #ffffff;
+        }
+
+            .form-actions .btn-cancel:hover {
+                background-color: #5a6268;
+                border-color: #5a6268;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+            }
+</style>
+
+<div class="announcement-form-page">
+    <div class="announcement-form-container">
+        <div class="card announcement-form-card">
+            <div class="card-header">
+                <h2 class="card-title">Create Announcement</h2>
+            </div>
+            <div class="card-body">
+                <form asp-action="CreateAnnouncement" method="post">
+                    <div class="form-group">
+                        <label asp-for="Title" class="form-label">Announcement Title</label>
+                        <input asp-for="Title" class="form-control" placeholder="Enter the announcement title" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Content" class="form-label">Content</label>
+                        <textarea asp-for="Content" class="form-control" rows="5" placeholder="Enter the announcement content"></textarea>
+                        <span asp-validation-for="Content" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input asp-for="IsActive" type="checkbox" class="form-check-input" id="IsActive" />
+                            <label asp-for="IsActive" class="form-check-label">Make this announcement active</label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">Create</button>
+                        <a href="@Url.Action("Announcements", "Admin")" class="btn-cancel">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

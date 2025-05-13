@@ -1,0 +1,6 @@
+@{ 
+    ViewData["Title"] = "Error"; 
+} 
+<h1>Error</h1> 
+<p>@(ViewBag.Error ?? "Something went wrong")</p> 
+<a asp-controller="Books" asp-action="Index" class="btn btn-secondary">Back to Books</a> 

@@ -1,0 +1,165 @@
+@model List<GyanGanga.Web.Models.Classes.ShowBook>
+
+    @{
+    ViewData["Title"] = "Manage Books";
+    }
+
+    <style>
+        .admin-container {
+            padding: 20px;
+        }
+
+        .admin-action {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+            .admin-action a {
+                padding: 10px 20px;
+                border-radius: 25px;
+                background: #4A90E2;
+                border: none;
+                font-weight: 600;
+                color: #ffffff;
+                transition: all 0.3s ease;
+                text-decoration: none;
+            }
+
+                .admin-action a:hover {
+                    background: #3A80D2;
+                    transform: translateY(-3px);
+                    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+                }
+
+        .book-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .book-card {
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            padding: 15px;
+            width: 300px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+            .book-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+            }
+
+            .book-card img {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+                border-radius: 10px;
+                margin-bottom: 10px;
+            }
+
+            .book-card .title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 5px;
+            }
+
+            .book-card .author {
+                font-size: 1rem;
+                color: #666;
+                margin-bottom: 5px;
+            }
+
+            .book-card .rating {
+                color: #f39c12;
+                font-size: 1.1rem;
+                margin-bottom: 5px;
+            }
+
+            .book-card .price {
+                font-size: 1.2rem;
+                font-weight: 700;
+                color: #4A90E2;
+                margin-bottom: 10px;
+            }
+
+            .book-card .actions {
+                display: flex;
+                gap: 10px;
+                justify-content: center;
+            }
+
+                .book-card .actions a, .book-card .actions button {
+                    padding: 8px 15px;
+                    border-radius: 25px;
+                    border: none;
+                    font-weight: 600;
+                    color: #ffffff;
+                    transition: all 0.3s ease;
+                    text-decoration: none;
+                }
+
+                .book-card .actions .btn-edit {
+                    background: #4A90E2;
+                }
+
+                    .book-card .actions .btn-edit:hover {
+                        background: #3A80D2;
+                        transform: translateY(-3px);
+                        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+                    }
+
+                .book-card .actions .btn-delete {
+                    background: #dc3545;
+                }
+
+                    .book-card .actions .btn-delete:hover {
+                        background: #c82333;
+                        transform: translateY(-3px);
+                        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+                    }
+    </style>
+
+    <div class="admin-container">
+        <h2 class="section-title">Manage Books</h2>
+        <div class="admin-action">
+            <a href="@Url.Action("AddBook", "Admin")">Add New Book</a>
+        </div>
+        @if (Model == null || Model.Count == 0)
+    {
+        <div class="alert alert-info text-center" role="alert">
+            No books found.
+        </div>
+    }
+    else
+    {
+        <div class="book-list">
+            @foreach (var book in Model)
+            {
+            <div class="book-card">
+                <img src="https://via.placeholder.com/300x200?text=@(book.BookTitle)" alt="@(book.BookTitle)">
+                <h5 class="title">@book.BookTitle</h5>
+                <p class="author">@book.BookAuthor</p>
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span>(@book.Rating)</span>
+                </div>
+                <p class="price">NPR @(book.BookPrice * 133).ToString("N2")</p>
+                <div class="actions">
+                    <a href="@Url.Action("EditBook", "Admin", new { id = book.BookId })" class="btn-edit">Edit</a>
+                    <form asp-action="DeleteBook" asp-route-id="@book.BookId" method="post" class="d-inline">
+                        <button type="submit" class="btn-delete" onclick="return confirm('Are you sure you want to delete this book?')">Delete</button>
+                    </form>
+                </div>
+            </div>
+            }
+        </div>
+    }
+    </div>

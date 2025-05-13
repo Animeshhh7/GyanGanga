@@ -1,0 +1,113 @@
+@model List<(GyanGanga.Web.Models.Classes.CartBook CartItem, GyanGanga.Web.Models.Classes.Book Book)>
+
+    @{
+    ViewData["Title"] = "Manage Carts";
+    }
+
+    <style>
+        .admin-container {
+            padding: 20px;
+        }
+
+        .cart-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .cart-item {
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            padding: 15px;
+            width: 300px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+            .cart-item:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+            }
+
+            .cart-item img {
+                width: 100%;
+                height: 150px;
+                object-fit: cover;
+                border-radius: 10px;
+                margin-bottom: 10px;
+            }
+
+            .cart-item .title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 5px;
+            }
+
+            .cart-item .user {
+                font-size: 1rem;
+                color: #666;
+                margin-bottom: 5px;
+            }
+
+            .cart-item .quantity {
+                font-size: 1rem;
+                color: #4A90E2;
+                margin-bottom: 10px;
+            }
+
+            .cart-item .actions {
+                display: flex;
+                justify-content: center;
+            }
+
+                .cart-item .actions button {
+                    padding: 8px 15px;
+                    border-radius: 25px;
+                    background: #dc3545;
+                    border: none;
+                    font-weight: 600;
+                    color: #ffffff;
+                    transition: all 0.3s ease;
+                }
+
+                    .cart-item .actions button:hover {
+                        background: #c82333;
+                        transform: translateY(-3px);
+                        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+                    }
+    </style>
+
+    <div class="admin-container">
+        <h2 class="section-title">Manage Carts</h2>
+        @if (Model == null || Model.Count == 0)
+    {
+        <div class="alert alert-info text-center" role="alert">
+            No cart items found.
+        </div>
+    }
+    else
+    {
+        <div class="cart-list">
+            @foreach (var item in Model)
+            {
+            <div class="cart-item">
+                <img src="https://via.placeholder.com/300x150?text=@(item.Book.BookTitle)" alt="@(item.Book.BookTitle)">
+                <h5 class="title">@item.Book.BookTitle</h5>
+                <p class="user">User ID: @item.CartItem.UserId</p>
+                <p class="quantity">Quantity: @item.CartItem.Quantity</p>
+                <div class="actions">
+                    <form asp-action="DeleteCartItem" asp-route-bookId="@item.CartItem.BookId" asp-route-userId="@item.CartItem.UserId" method="post">
+                        <button type="submit" class="btn-remove" onclick="return confirm('Are you sure you want to delete this cart item?')">Delete</button>
+                    </form>
+                </div>
+            </div>
+            }
+        </div>
+    }
+    </div>
+
+    @section Scripts {
+        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    }

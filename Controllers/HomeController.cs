@@ -1,25 +1,16 @@
+using GyanGanga.Web.Models.Classes; 
+using GyanGanga.Web.Services.Interfaces; 
 using Microsoft.AspNetCore.Mvc; 
-using GyanGanga.Web.Models; 
-using System.Diagnostics; 
- 
-namespace GyanGanga.Web.Controllers 
-{ 
-    public class HomeController : Controller 
-    { 
-        public IActionResult Index() 
-        { 
-            return View(); 
+using System.Threading.Tasks; 
+namespace GyanGanga.Web.Controllers { 
+    public class HomeController : Controller { 
+        private readonly IBookHelper _bookHelper; 
+        public HomeController(IBookHelper bookHelper) { 
+            _bookHelper = bookHelper; 
         } 
- 
-        public IActionResult Privacy() 
-        { 
-            return View(); 
-        } 
- 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)] 
-        public IActionResult Error() 
-        { 
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier }); 
+        public async Task<IActionResult> Index() { 
+            var books = await _bookHelper.GetAllBooks(); 
+            return View(books); 
         } 
     } 
 } 

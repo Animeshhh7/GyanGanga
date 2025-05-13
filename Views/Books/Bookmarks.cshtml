@@ -1,0 +1,208 @@
+@model List<GyanGanga.Web.Models.Classes.ShowBook>
+
+    @{
+    ViewData["Title"] = "Bookmarks";
+    }
+
+    <style>
+        /* Section Titles */
+        .section-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #333;
+            margin: 60px 0 30px;
+            text-align: center;
+            position: relative;
+        }
+
+            .section-title::before {
+                content: '';
+                width: 90px;
+                height: 5px;
+                background: linear-gradient(90deg, #4A90E2, #3A80D2);
+                position: absolute;
+                bottom: -15px;
+                left: 50%;
+                transform: translateX(-50%);
+                border-radius: 5px;
+            }
+
+        /* Modern Book Card */
+        .book-card {
+            position: relative;
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 40px;
+            height: 100%;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+            .book-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+            }
+
+            .book-card img {
+                width: 100%;
+                height: 320px;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+
+            .book-card:hover img {
+                transform: scale(1.08);
+            }
+
+            .book-card .card-body {
+                padding: 25px;
+                text-align: center;
+                background: rgba(255,255,255,0.95);
+                backdrop-filter: blur(8px); /* Glassmorphism effect */
+            }
+
+            .book-card .card-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 10px;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+
+            .book-card .card-author {
+                font-size: 1rem;
+                color: #666;
+                margin-bottom: 10px;
+            }
+
+            .book-card .rating {
+                margin-bottom: 10px;
+                color: #f39c12;
+                font-size: 1.1rem;
+            }
+
+            .book-card .price {
+                font-size: 1.4rem;
+                font-weight: 700;
+                color: #4A90E2;
+                margin-bottom: 15px;
+            }
+
+            .book-card .action-buttons {
+                display: flex;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .book-card .btn-icon {
+                font-size: 1rem;
+                padding: 10px;
+                border-radius: 50%;
+                background: #f8f9fa;
+                border: 1px solid #ddd;
+                color: #4A90E2;
+                transition: all 0.3s ease;
+            }
+
+                .book-card .btn-icon:hover {
+                    background: #4A90E2;
+                    color: #ffffff;
+                    transform: scale(1.1);
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+                }
+
+        /* Back to Catalog Button */
+        .back-to-catalog {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+            .back-to-catalog a {
+                padding: 12px 30px;
+                border-radius: 25px;
+                background: #6c757d;
+                border: none;
+                font-weight: 600;
+                color: #ffffff;
+                transition: all 0.3s ease;
+                text-decoration: none;
+            }
+
+                .back-to-catalog a:hover {
+                    background: #5a6268;
+                    transform: translateY(-3px);
+                    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+                }
+    </style>
+
+    <h2 class="section-title">Bookmarks</h2>
+    @if (Model == null || Model.Count == 0)
+{
+    <div class="alert alert-info text-center" role="alert">
+        No bookmarks found.
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach (var book in Model)
+        {
+        <div class="col-md-4">
+            <div class="book-card">
+                <img src="https://via.placeholder.com/300x320?text=@(book.BookTitle)" class="card-img-top" alt="@(book.BookTitle)">
+                <div class="card-body">
+                    <h5 class="card-title">@book.BookTitle</h5>
+                    <p class="card-author">@book.BookAuthor</p>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span>(@book.Rating)</span>
+                    </div>
+                    <p class="price">NPR @(book.BookPrice * 133).ToString("N2")</p>
+                    <div class="action-buttons">
+                        <form asp-controller="Books" asp-action="AddToCart" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@(book.BookId)" />
+                            <input type="hidden" name="quantity" value="1" />
+                            <button type="submit" class="btn-icon" title="Add to Cart"><i class="fas fa-cart-plus"></i></button>
+                        </form>
+                        @if (book.IsBookmarked)
+                            {
+                        <form asp-controller="Books" asp-action="Unbookmark" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@(book.BookId)" />
+                            <button type="submit" class="btn-icon" title="Unbookmark"><i class="fas fa-bookmark"></i></button>
+                        </form>
+                            }
+                            else
+                            {
+                        <form asp-controller="Books" asp-action="SaveBook" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@(book.BookId)" />
+                            <button type="submit" class="btn-icon" title="Bookmark"><i class="far fa-bookmark"></i></button>
+                        </form>
+                            }
+                        <a href="@Url.Action("Details", "Books", new { id = book.BookId })" class="btn-icon" title="View Details"><i class="fas fa-eye"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+}
+
+    <div class="back-to-catalog">
+        <a href="@Url.Action("Index", "Books")" class="btn btn-secondary">Back to Catalog</a>
+    </div>
+
+    @section Scripts {
+        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    }

@@ -4,16 +4,21 @@ using GyanGanga.Web.Models.Classes;
 using GyanGanga.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using GyanGanga.Web.Data;
+using GyanGanga.Web.Models.Views;
 
 namespace GyanGanga.Web.Controllers
 {
     public class BooksController : Controller
     {
         private readonly IBookHelper _bookHelper;
+        private readonly MyDB _db;
 
-        public BooksController(IBookHelper bookHelper)
+        public BooksController(IBookHelper bookHelper, MyDB db)
         {
             _bookHelper = bookHelper;
+            _db = db;
         }
 
         public async Task<IActionResult> Index(string search, string sort, string genre, string format, decimal? minPrice, decimal? maxPrice)
@@ -78,6 +83,20 @@ namespace GyanGanga.Web.Controllers
                 {
                     book.IsBookmarked = await _bookHelper.IsBookmarked(book.BookId, userId);
                 }
+            }
+
+            // Fetch review counts for all books in the query
+            var bookIds = booksQuery.Select(b => b.BookId).ToList();
+            var reviewCounts = await _db.Reviews
+                .Where(r => bookIds.Contains(r.BookId))
+                .GroupBy(r => r.BookId)
+                .Select(g => new { BookId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(g => g.BookId, g => g.Count);
+
+            // Assign review counts to each book
+            foreach (var book in booksQuery)
+            {
+                book.ReviewCount = reviewCounts.ContainsKey(book.BookId) ? reviewCounts[book.BookId] : 0;
             }
 
             // Pass filter parameters to the view for form persistence
@@ -252,6 +271,169 @@ namespace GyanGanga.Web.Controllers
             ViewBag.FinalPrice = decimal.Parse(TempData["FinalPrice"]?.ToString() ?? "0");
 
             return View(orderItems);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> MyPurchases()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var orders = await _db.Orders
+                .Where(o => o.UserId == userId)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Book)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+
+            var orderViewModels = new List<OrderViewModel>();
+            foreach (var order in orders)
+            {
+                var orderViewModel = new OrderViewModel
+                {
+                    OrderId = order.OrderId,
+                    UserId = order.UserId ?? string.Empty,
+                    OrderDate = order.OrderDate,
+                    TotalPrice = order.TotalPrice,
+                    Status = order.Status ?? string.Empty,
+                    OrderItems = new List<OrderItemViewModel>()
+                };
+
+                foreach (var item in order.OrderItems)
+                {
+                    var userRating = await _bookHelper.GetUserRating(item.BookId, userId);
+                    var userReview = await _bookHelper.GetUserReview(item.BookId, userId);
+
+                    orderViewModel.OrderItems.Add(new OrderItemViewModel
+                    {
+                        BookId = item.BookId,
+                        BookTitle = item.Book.BookTitle ?? string.Empty,
+                        Quantity = item.Quantity,
+                        UnitPrice = item.UnitPrice,
+                        UserRating = userRating,
+                        UserReview = userReview
+                    });
+                }
+
+                orderViewModels.Add(orderViewModel);
+            }
+
+            return View(orderViewModels);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> ClearPurchaseHistory()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            await _bookHelper.ClearPurchaseHistory(userId);
+            TempData["Success"] = "Purchase history cleared successfully!";
+            return RedirectToAction("MyPurchases");
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> SubmitRating(int bookId, decimal rating)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Check if the user has purchased the book
+            var hasPurchased = await _bookHelper.HasPurchasedBook(userId, bookId);
+            if (!hasPurchased)
+            {
+                TempData["Error"] = "You can only rate books you have purchased.";
+                return RedirectToAction("MyPurchases");
+            }
+
+            try
+            {
+                await _bookHelper.SubmitRating(bookId, userId, rating);
+                TempData["Success"] = "Rating submitted successfully!";
+            }
+            catch (ArgumentException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+
+            return RedirectToAction("MyPurchases");
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> SubmitReview(int bookId, string review)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Check if the user has purchased the book
+            var hasPurchased = await _bookHelper.HasPurchasedBook(userId, bookId);
+            if (!hasPurchased)
+            {
+                TempData["Error"] = "You can only review books you have purchased.";
+                return RedirectToAction("MyPurchases");
+            }
+
+            try
+            {
+                await _bookHelper.SubmitReview(bookId, userId, review);
+                TempData["Success"] = "Review submitted successfully!";
+            }
+            catch (ArgumentException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+
+            return RedirectToAction("MyPurchases");
+        }
+
+        public async Task<IActionResult> Reviews(int id)
+        {
+            // Fetch the book details
+            var book = await _db.BookList.FirstOrDefaultAsync(b => b.BookId == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            // Fetch all reviews for the book
+            var reviews = await _db.Reviews
+                .Where(r => r.BookId == id)
+                .Join(
+                    _db.Users,
+                    r => r.UserId,
+                    u => u.Id,
+                    (r, u) => new ReviewViewModel
+                    {
+                        UserName = u.UserName ?? "Anonymous",
+                        Content = r.Content,
+                        PostedDate = r.PostedDate
+                    })
+                .OrderByDescending(r => r.PostedDate)
+                .ToListAsync();
+
+            var viewModel = new BookReviewsViewModel
+            {
+                BookId = book.BookId,
+                BookTitle = book.BookTitle ?? string.Empty,
+                Reviews = reviews
+            };
+
+            return View(viewModel);
         }
     }
 }

@@ -1,0 +1,243 @@
+@model GyanGanga.Web.Models.Views.BookReviewsViewModel
+
+@{
+    ViewData["Title"] = $"Reviews for {Model.BookTitle}";
+}
+
+<style>
+    /* Page Layout */
+    .reviews-page {
+        min-height: calc(100vh - 50px);
+        background: #f7f9fc;
+        padding: 20px 20px 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Main Container */
+    .reviews-container {
+        width: 100%;
+        max-width: 900px;
+        margin: 0 0 0 0; /* Align with sidebar */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* Align content to the left */
+    }
+
+    /* Section Titles */
+    .section-title {
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #2d3436;
+        margin: 20px 0;
+        position: relative;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        text-align: left;
+        font-family: 'Playfair Display', serif;
+        background: linear-gradient(90deg, #74b9ff, #4a90e2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+        .section-title::before {
+            content: '';
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #74b9ff, #4a90e2);
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            border-radius: 2px;
+        }
+
+    /* Alerts */
+    .alert-info {
+        width: 100%;
+        border-radius: 8px;
+        padding: 15px;
+        font-size: 1rem;
+        text-align: left;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        font-family: 'Roboto', sans-serif;
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+
+    /* Back Button */
+    .back-button {
+        margin-bottom: 20px;
+    }
+
+        .back-button a {
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: #74b9ff;
+            border: none;
+            font-weight: 600;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-family: 'Roboto', sans-serif;
+            display: inline-flex;
+            align-items: center;
+        }
+
+            .back-button a:hover {
+                background: #4a90e2;
+                transform: translateY(-3px);
+                box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            }
+
+            .back-button a i {
+                margin-right: 5px;
+            }
+
+    /* Reviews List */
+    .reviews-list {
+        width: 100%;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        padding: 20px;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .review-item {
+        border-bottom: 1px solid #e6f0fa;
+        padding: 15px 0;
+    }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+
+        .review-header .username {
+            font-weight: 600;
+            color: #2d3436;
+            font-size: 0.95rem;
+        }
+
+        .review-header .posted-date {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+    .review-content {
+        font-size: 0.9rem;
+        color: #666;
+        line-height: 1.4;
+    }
+
+    /* Responsive Adjustments */
+    @@media (max-width: 768px) {
+        .section-title {
+            font-size: 2.2rem;
+        }
+
+        .reviews-list {
+            padding: 15px;
+        }
+
+        .review-item {
+            padding: 10px 0;
+        }
+
+        .review-header .username {
+            font-size: 0.9rem;
+        }
+
+        .review-header .posted-date {
+            font-size: 0.8rem;
+        }
+
+        .review-content {
+            font-size: 0.85rem;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .section-title {
+            font-size: 1.8rem;
+        }
+
+        .back-button a {
+            width: 100%;
+            text-align: center;
+        }
+
+        .reviews-list {
+            padding: 10px;
+        }
+
+        .review-item {
+            padding: 8px 0;
+        }
+
+        .review-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+            .review-header .username {
+                font-size: 0.85rem;
+            }
+
+            .review-header .posted-date {
+                font-size: 0.75rem;
+            }
+
+        .review-content {
+            font-size: 0.8rem;
+        }
+    }
+</style>
+
+<div class="reviews-page">
+    <div class="reviews-container">
+        <!-- Back Button -->
+        <div class="back-button">
+            <a href="@Url.Action("Index", "Books")"><i class="fas fa-arrow-left"></i> Back to Catalogue</a>
+        </div>
+
+        <!-- Section Title -->
+        <h2 class="section-title">Reviews for @Model.BookTitle</h2>
+
+        <!-- Reviews List -->
+        @if (Model.Reviews == null || Model.Reviews.Count == 0)
+        {
+        <div class="alert alert-info" role="alert">
+            No reviews found for this book.
+        </div>
+        }
+        else
+        {
+        <div class="reviews-list">
+            @foreach (var review in Model.Reviews)
+                {
+            <div class="review-item">
+                <div class="review-header">
+                    <span class="username">@review.UserName</span>
+                    <span class="posted-date">@review.PostedDate.ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+                <p class="review-content">@review.Content</p>
+            </div>
+                }
+        </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+}

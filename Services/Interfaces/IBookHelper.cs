@@ -8,7 +8,7 @@ namespace GyanGanga.Web.Services.Interfaces
     public interface IBookHelper
     {
         Task<List<ShowBook>> GetAllBooks();
-        Task<Book?> GetBookEntityById(int id); // Changed to Book?
+        Task<Book?> GetBookEntityById(int id);
         Task AddBook(Book book);
         Task UpdateBook(Book book);
         Task DeleteBook(int id);
@@ -30,6 +30,14 @@ namespace GyanGanga.Web.Services.Interfaces
         Task AddAnnouncement(Announcement announcement);
         Task UpdateAnnouncement(Announcement announcement);
         Task DeleteAnnouncement(int announcementId);
+        Task<List<ShowBook>> GetPurchasedBooks(string userId);
+        Task ClearPurchaseHistory(string userId);
         Task<AdminReportViewModel> GenerateAdminReport();
+        Task SubmitRating(int bookId, string userId, decimal rating); // Added for rating submission
+        Task SubmitReview(int bookId, string userId, string review); // Added for review submission
+        Task UpdateBookRating(int bookId); // Added to update global rating
+        Task<bool> HasPurchasedBook(string userId, int bookId); // Added to check if user has purchased the book
+        Task<decimal?> GetUserRating(int bookId, string userId); // Added to get user's existing rating
+        Task<string> GetUserReview(int bookId, string userId); // Added to get user's existing review
     }
 }

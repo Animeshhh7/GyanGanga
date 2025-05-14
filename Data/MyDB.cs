@@ -17,6 +17,8 @@ namespace GyanGanga.Web.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Announcement> Announcements { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -62,6 +64,18 @@ namespace GyanGanga.Web.Data
             builder.Entity<OrderItem>().Property(oi => oi.UnitPrice).HasColumnName("unit_price");
             builder.Entity<OrderItem>().HasKey(oi => new { oi.OrderId, oi.BookId });
 
+            // Configure the one-to-many relationship between Order and OrderItem
+            builder.Entity<Order>()
+                .HasMany(o => o.OrderItems)
+                .WithOne(oi => oi.Order)
+                .HasForeignKey(oi => oi.OrderId);
+
+            // Configure the one-to-many relationship between OrderItem and Book
+            builder.Entity<OrderItem>()
+                .HasOne(oi => oi.Book)
+                .WithMany()
+                .HasForeignKey(oi => oi.BookId);
+
             builder.Entity<Announcement>().ToTable("announcements");
             builder.Entity<Announcement>().HasKey(a => a.AnnouncementId);
             builder.Entity<Announcement>().Property(a => a.AnnouncementId).HasColumnName("announcement_id");
@@ -69,6 +83,32 @@ namespace GyanGanga.Web.Data
             builder.Entity<Announcement>().Property(a => a.Content).HasColumnName("content");
             builder.Entity<Announcement>().Property(a => a.PostedDate).HasColumnName("posted_date");
             builder.Entity<Announcement>().Property(a => a.IsActive).HasColumnName("is_active");
+
+            // Configure Ratings
+            builder.Entity<Rating>().ToTable("ratings");
+            builder.Entity<Rating>().Property(r => r.BookId).HasColumnName("book_id");
+            builder.Entity<Rating>().Property(r => r.UserId).HasColumnName("user_id");
+            builder.Entity<Rating>().Property(r => r.Value).HasColumnName("value");
+            builder.Entity<Rating>().HasKey(r => new { r.BookId, r.UserId });
+
+            builder.Entity<Rating>()
+                .HasOne(r => r.Book)
+                .WithMany()
+                .HasForeignKey(r => r.BookId);
+
+            // Configure Reviews
+            builder.Entity<Review>().ToTable("reviews");
+            builder.Entity<Review>().HasKey(r => r.Id);
+            builder.Entity<Review>().Property(r => r.Id).HasColumnName("id").ValueGeneratedOnAdd();
+            builder.Entity<Review>().Property(r => r.BookId).HasColumnName("book_id");
+            builder.Entity<Review>().Property(r => r.UserId).HasColumnName("user_id");
+            builder.Entity<Review>().Property(r => r.Content).HasColumnName("content").HasMaxLength(50);
+            builder.Entity<Review>().Property(r => r.PostedDate).HasColumnName("posted_date");
+
+            builder.Entity<Review>()
+                .HasOne(r => r.Book)
+                .WithMany()
+                .HasForeignKey(r => r.BookId);
 
             // Identity tables with snake_case column mappings
             builder.Entity<IdentityRole>().ToTable("roles");

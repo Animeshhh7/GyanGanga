@@ -26,6 +26,35 @@
             align-items: flex-start; /* Shift content towards the left */
         }
 
+        /* My Purchases Button */
+        .my-purchases {
+            margin-bottom: 20px;
+        }
+
+            .my-purchases a {
+                padding: 10px 20px;
+                border-radius: 25px;
+                background: #74b9ff;
+                border: none;
+                font-weight: 600;
+                color: #ffffff;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                font-family: 'Roboto', sans-serif;
+                display: inline-flex;
+                align-items: center;
+            }
+
+                .my-purchases a:hover {
+                    background: #4a90e2;
+                    transform: translateY(-3px);
+                    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+                }
+
+                .my-purchases a i {
+                    margin-right: 5px;
+                }
+
         /* Header Text */
         .catalog-header {
             font-size: 1.6rem;
@@ -253,7 +282,7 @@
             align-items: center;
             position: relative;
             aspect-ratio: 1 / 1.2; /* Adjusted aspect ratio to accommodate increased height */
-            height: 360px; /* Increased height from 320px to 360px */
+            height: 380px; /* Increased height to accommodate new elements */
             background: linear-gradient(145deg, #ffffff, #f7f9fc);
         }
 
@@ -314,7 +343,58 @@
                 margin-bottom: 5px;
                 color: #f1c40f;
                 font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+                transition: transform 0.3s ease;
             }
+
+                .book-card .rating:hover {
+                    transform: scale(1.1);
+                }
+
+                .book-card .rating i {
+                    font-size: 0.9rem;
+                }
+
+                .book-card .rating .rating-value {
+                    font-size: 0.85rem;
+                    color: #666;
+                    font-family: 'Roboto', sans-serif;
+                }
+
+            .book-card .review-info {
+                margin-bottom: 5px;
+                font-size: 0.85rem;
+                color: #666;
+                font-family: 'Roboto', sans-serif;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+                transition: transform 0.3s ease;
+            }
+
+                .book-card .review-info:hover {
+                    transform: scale(1.1);
+                }
+
+                .book-card .review-info i {
+                    color: #74b9ff;
+                }
+
+            .book-card .view-reviews {
+                font-size: 0.8rem;
+                color: #74b9ff;
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+                .book-card .view-reviews:hover {
+                    color: #4a90e2;
+                    text-decoration: underline;
+                }
 
             .book-card .price {
                 font-size: 1rem;
@@ -394,16 +474,30 @@
                 margin-left: 0;
                 justify-content: center;
             }
+
+            .my-purchases a {
+                width: 100%;
+                text-align: center;
+            }
+
+            .book-card {
+                height: 400px; /* Adjust height for smaller screens */
+            }
         }
     </style>
 
     <div class="books-page">
         <div class="books-container">
+            <!-- My Purchases Button -->
+            <div class="my-purchases">
+                <a href="@Url.Action("MyPurchases", "Books")"><i class="fas fa-shopping-bag"></i> My Purchases</a>
+            </div>
+
             <!-- Header Text -->
             <p class="catalog-header">Browse our collection of new, old, popular, not so popular, any kinds of books in any format and purchase them at best prices from our store!</p>
 
             <!-- Books Catalogue Title -->
-            <h2 class="section-title">Browse our Catelogue</h2>
+            <h2 class="section-title">Browse our Catalogue</h2>
 
             <!-- Search and Filter Section -->
             <div class="search-filter-section">
@@ -517,7 +611,12 @@
                                 <i class="far fa-star"></i>
                                     }
                             }
-                            <span>(@book.Rating)</span>
+                            <span class="rating-value">(@book.Rating.ToString("F1"))</span>
+                        </div>
+                        <div class="review-info">
+                            <i class="fas fa-comment"></i>
+                            <span>@book.ReviewCount Reviews</span>
+                            <a href="@Url.Action("Reviews", "Books", new { id = book.BookId })" class="view-reviews">View</a>
                         </div>
                         <p class="price">Rs @book.BookPrice.ToString("N2")</p>
                         <div class="action-buttons">

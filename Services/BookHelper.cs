@@ -195,9 +195,9 @@ namespace GyanGanga.Web.Services
             var result = bookmarks != null ? bookmarks.Select(x => new ShowBook
             {
                 BookId = x.Book.BookId,
-                BookTitle = x.Book.BookTitle ?? "",
-                BookAuthor = x.Book.BookAuthor ?? "",
-                BookGenre = x.Book.BookGenre ?? "",
+                BookTitle = x.Book.BookTitle!,
+                BookAuthor = x.Book.BookAuthor!,
+                BookGenre = x.Book.BookGenre!,
                 BookPrice = x.Book.BookPrice,
                 BookFormat = x.Book.BookFormat ?? "",
                 BookStock = x.Book.BookStock,
@@ -434,6 +434,177 @@ namespace GyanGanga.Web.Services
             report.UserActivity = userActivity;
 
             return report;
+        }
+
+        public async Task<List<ShowBook>> GetPurchasedBooks(string userId)
+        {
+            // Retrieve orders for the user
+            var orders = await _db.Orders
+                .Where(o => o.UserId == userId)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Book)
+                .ToListAsync();
+
+            // Map order items to ShowBook objects
+            var purchasedBooks = new List<ShowBook>();
+            foreach (var order in orders)
+            {
+                foreach (var item in order.OrderItems)
+                {
+                    var book = item.Book;
+                    purchasedBooks.Add(new ShowBook
+                    {
+                        BookId = book.BookId,
+                        BookTitle = book.BookTitle ?? "",
+                        BookAuthor = book.BookAuthor ?? "",
+                        BookGenre = book.BookGenre ?? "",
+                        BookPrice = book.BookPrice,
+                        BookFormat = book.BookFormat ?? "",
+                        BookStock = book.BookStock,
+                        BookIsbn = book.BookIsbn ?? "",
+                        Rating = book.Rating ?? 4.5m,
+                        Quantity = item.Quantity,
+                        CoverImagePath = book.CoverImagePath ?? ""
+                    });
+                }
+            }
+
+            return purchasedBooks;
+        }
+
+        public async Task ClearPurchaseHistory(string userId)
+        {
+            // Remove orders for the user
+            var orders = await _db.Orders
+                .Where(o => o.UserId == userId)
+                .Include(o => o.OrderItems)
+                .ToListAsync();
+
+            foreach (var order in orders)
+            {
+                _db.OrderItems.RemoveRange(order.OrderItems);
+                _db.Orders.Remove(order);
+            }
+
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task SubmitRating(int bookId, string userId, decimal rating)
+        {
+            // Validate rating (1 to 5)
+            if (rating < 1 || rating > 5)
+            {
+                throw new ArgumentException("Rating must be between 1 and 5.");
+            }
+
+            // Check if the user has already rated this book
+            var existingRating = await _db.Ratings
+                .FirstOrDefaultAsync(r => r.BookId == bookId && r.UserId == userId);
+
+            if (existingRating != null)
+            {
+                // Update existing rating
+                existingRating.Value = rating;
+                _db.Ratings.Update(existingRating);
+            }
+            else
+            {
+                // Add new rating
+                var newRating = new Rating
+                {
+                    BookId = bookId,
+                    UserId = userId,
+                    Value = rating
+                };
+                _db.Ratings.Add(newRating);
+            }
+
+            await _db.SaveChangesAsync();
+
+            // Update the book's global rating
+            await UpdateBookRating(bookId);
+        }
+
+        public async Task SubmitReview(int bookId, string userId, string review)
+        {
+            // Validate review length (max 50 characters)
+            if (string.IsNullOrEmpty(review) || review.Length > 50)
+            {
+                throw new ArgumentException("Review must be between 1 and 50 characters.");
+            }
+
+            // Check if the user has already reviewed this book
+            var existingReview = await _db.Reviews
+                .FirstOrDefaultAsync(r => r.BookId == bookId && r.UserId == userId);
+
+            if (existingReview != null)
+            {
+                // Update existing review
+                existingReview.Content = review;
+                existingReview.PostedDate = DateTime.UtcNow;
+                _db.Reviews.Update(existingReview);
+            }
+            else
+            {
+                // Add new review
+                var maxId = await _db.Reviews.MaxAsync(r => (int?)r.Id) ?? 0;
+                var newReview = new Review
+                {
+                    Id = maxId + 1,
+                    BookId = bookId,
+                    UserId = userId,
+                    Content = review,
+                    PostedDate = DateTime.UtcNow
+                };
+                _db.Reviews.Add(newReview);
+            }
+
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task UpdateBookRating(int bookId)
+        {
+            // Calculate the average rating for the book
+            var ratings = await _db.Ratings
+                .Where(r => r.BookId == bookId)
+                .ToListAsync();
+
+            if (ratings.Any())
+            {
+                var averageRating = ratings.Average(r => r.Value);
+                var book = await _db.BookList.FindAsync(bookId);
+                if (book != null)
+                {
+                    book.Rating = averageRating;
+                    _db.BookList.Update(book);
+                    await _db.SaveChangesAsync();
+                }
+            }
+        }
+
+        public async Task<bool> HasPurchasedBook(string userId, int bookId)
+        {
+            return await _db.OrderItems
+                .Where(oi => oi.BookId == bookId)
+                .Join(_db.Orders,
+                    oi => oi.OrderId,
+                    o => o.OrderId,
+                    (oi, o) => o)
+                .AnyAsync(o => o.UserId == userId);
+        }
+
+        public async Task<decimal?> GetUserRating(int bookId, string userId)
+        {
+            var rating = await _db.Ratings
+                .FirstOrDefaultAsync(r => r.BookId == bookId && r.UserId == userId);
+            return rating?.Value;
+        }
+
+        public async Task<string> GetUserReview(int bookId, string userId)
+        {
+            var review = await _db.Reviews
+                .FirstOrDefaultAsync(r => r.BookId == bookId && r.UserId == userId);
+            return review?.Content ?? "";
         }
     }
 }

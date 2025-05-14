@@ -1,0 +1,524 @@
+﻿@model List<GyanGanga.Web.Models.Views.OrderViewModel>
+
+    @{
+    ViewData["Title"] = "My Purchases";
+    }
+
+    <style>
+        /* Page Layout */
+        .purchases-page {
+            min-height: calc(100vh - 50px);
+            background: #f7f9fc;
+            padding: 20px 20px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Main Container */
+        .purchases-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 0 0 0; /* Align with sidebar */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align content to the left */
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #2d3436;
+            margin: 20px 0;
+            position: relative;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-align: left;
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(90deg, #74b9ff, #4a90e2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+            .section-title::before {
+                content: '';
+                width: 80px;
+                height: 4px;
+                background: linear-gradient(90deg, #74b9ff, #4a90e2);
+                position: absolute;
+                bottom: -10px;
+                left: 0;
+                border-radius: 2px;
+            }
+
+        /* Alerts */
+        .alert {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 0 20px 0;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1rem;
+            text-align: left;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        /* Clear History Button */
+        .clear-history {
+            margin-bottom: 20px;
+        }
+
+            .clear-history button {
+                padding: 10px 20px;
+                border-radius: 25px;
+                background: #dc3545;
+                border: none;
+                font-weight: 600;
+                color: #ffffff;
+                transition: all 0.3s ease;
+                font-family: 'Roboto', sans-serif;
+                display: inline-flex;
+                align-items: center;
+            }
+
+                .clear-history button:hover {
+                    background: #c82333;
+                    transform: translateY(-3px);
+                    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+                }
+
+                .clear-history button i {
+                    margin-right: 5px;
+                }
+
+        /* Orders Table */
+        .orders-table {
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+        }
+
+            .orders-table th,
+            .orders-table td {
+                padding: 15px;
+                text-align: left;
+                border-bottom: 1px solid #e6f0fa;
+            }
+
+            .orders-table th {
+                background: linear-gradient(145deg, #ffffff, #f7f9fc);
+                color: #2d3436;
+                font-weight: 600;
+                font-size: 1rem;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .orders-table tbody tr {
+                transition: background 0.3s ease;
+            }
+
+                .orders-table tbody tr:hover {
+                    background: #f9f9f9;
+                }
+
+            .orders-table td {
+                color: #666;
+                font-size: 0.95rem;
+            }
+
+            .orders-table .status-pending {
+                color: #e67e22;
+                font-weight: 600;
+            }
+
+            .orders-table .status-completed {
+                color: #28a745;
+                font-weight: 600;
+            }
+
+            .orders-table .btn-details {
+                padding: 8px 15px;
+                border-radius: 25px;
+                background: #74b9ff;
+                border: none;
+                font-weight: 600;
+                color: #ffffff;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                font-family: 'Roboto', sans-serif;
+                display: inline-flex;
+                align-items: center;
+                cursor: pointer;
+            }
+
+                .orders-table .btn-details:hover {
+                    background: #4a90e2;
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(116, 185, 255, 0.3);
+                }
+
+                .orders-table .btn-details i {
+                    margin-right: 5px;
+                }
+
+        /* Order Items Details (Hidden by Default) */
+        .order-items-details {
+            display: none;
+            padding: 15px;
+            background: #f7f9fc;
+            border-top: 1px solid #e6f0fa;
+        }
+
+            .order-items-details.show {
+                display: table-row;
+            }
+
+            .order-items-details td {
+                padding: 15px;
+            }
+
+        .order-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Roboto', sans-serif;
+        }
+
+            .order-items-table th,
+            .order-items-table td {
+                padding: 10px;
+                text-align: left;
+                border-bottom: 1px solid #e6f0fa;
+            }
+
+            .order-items-table th {
+                background: #ffffff;
+                color: #2d3436;
+                font-weight: 600;
+                font-size: 0.9rem;
+                text-transform: uppercase;
+            }
+
+            .order-items-table td {
+                color: #666;
+                font-size: 0.9rem;
+            }
+
+            .order-items-table .book-title {
+                font-weight: 500;
+                color: #2d3436;
+            }
+
+            .order-items-table .price {
+                color: #74b9ff;
+                font-weight: 600;
+            }
+
+        /* Star Rating System */
+        .star-rating {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+            .star-rating input {
+                display: none;
+            }
+
+            .star-rating label {
+                font-size: 1.2rem;
+                color: #ddd;
+                cursor: pointer;
+                transition: color 0.3s ease;
+            }
+
+                .star-rating label:hover,
+                .star-rating label:hover ~ label,
+                .star-rating input:checked ~ label {
+                    color: #f1c40f;
+                }
+
+        /* Review Input */
+        .review-input {
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .review-input textarea {
+                width: 200px;
+                height: 40px;
+                padding: 5px;
+                border-radius: 5px;
+                border: 1px solid #d0d0d0;
+                font-size: 0.9rem;
+                font-family: 'Roboto', sans-serif;
+                resize: none;
+                background-color: #f9f9f9;
+                transition: all 0.3s ease;
+            }
+
+                .review-input textarea:focus {
+                    border-color: #74b9ff;
+                    box-shadow: 0 0 10px rgba(116, 185, 255, 0.2);
+                    outline: none;
+                    background-color: #fff;
+                }
+
+            .review-input button {
+                padding: 8px 15px;
+                border-radius: 25px;
+                background: #74b9ff;
+                border: none;
+                font-weight: 600;
+                color: #ffffff;
+                transition: all 0.3s ease;
+                font-family: 'Roboto', sans-serif;
+                display: inline-flex;
+                align-items: center;
+            }
+
+                .review-input button:hover {
+                    background: #4a90e2;
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(116, 185, 255, 0.3);
+                }
+
+                .review-input button i {
+                    margin-right: 5px;
+                }
+
+        .existing-rating,
+        .existing-review {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+            .existing-rating span,
+            .existing-review span {
+                color: #f1c40f;
+                font-weight: 600;
+            }
+
+        /* Responsive Adjustments */
+        @@media (max-width: 768px) {
+            .orders-table th,
+            .orders-table td {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+
+            .order-items-table th,
+            .order-items-table td {
+                padding: 8px;
+                font-size: 0.85rem;
+            }
+
+            .orders-table .btn-details,
+            .clear-history button,
+            .review-input button {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+
+            .review-input textarea {
+                width: 150px;
+                height: 35px;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .orders-table th,
+            .orders-table td {
+                padding: 8px;
+                font-size: 0.85rem;
+            }
+
+            .order-items-table th,
+            .order-items-table td {
+                padding: 6px;
+                font-size: 0.8rem;
+            }
+
+            .orders-table .btn-details,
+            .clear-history button,
+            .review-input button {
+                width: 100%;
+                text-align: center;
+            }
+
+            .review-input textarea {
+                width: 100%;
+                height: 40px;
+            }
+
+            .review-input {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+
+    <div class="purchases-page">
+        <div class="purchases-container">
+            <h2 class="section-title">My Purchases</h2>
+            @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success" role="alert">
+                @TempData["Success"]
+            </div>
+        }
+            @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @TempData["Error"]
+            </div>
+        }
+            @if (Model == null || Model.Count == 0)
+        {
+            <div class="alert alert-info" role="alert">
+                No purchase history found.
+            </div>
+        }
+        else
+        {
+ <!-- Clear History Button -->
+            <div class="clear-history">
+                <form asp-controller="Books" asp-action="ClearPurchaseHistory" method="post">
+                    <button type="submit"><i class="fas fa-trash-alt"></i> Clear History</button>
+                </form>
+            </div>
+
+ <!-- Orders Table -->
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Order Date</th>
+                        <th>Total Price</th>
+                        <th>Status</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                    <tr>
+                        <td>#@order.OrderId</td>
+                        <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>Rs @order.TotalPrice.ToString("N2")</td>
+                        <td class="@(order.Status == "Pending" ? "status-pending" : "status-completed")">@order.Status</td>
+                        <td>
+                            <button class="btn-details" onclick="toggleDetails(@order.OrderId)">
+                                <i class="fas fa-eye"></i> View Details
+                            </button>
+                        </td>
+                    </tr>
+                    <tr id="details-@order.OrderId" class="order-items-details">
+                        <td colspan="5">
+                            <table class="order-items-table">
+                                <thead>
+                                    <tr>
+                                        <th>Book Title</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                        <th>Total Price</th>
+                                        <th>Rating</th>
+                                        <th>Review</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in order.OrderItems)
+                                        {
+                                    <tr>
+                                        <td class="book-title">@item.BookTitle</td>
+                                        <td>@item.Quantity</td>
+                                        <td>Rs @item.UnitPrice.ToString("N2")</td>
+                                        <td class="price">Rs @(item.Quantity * item.UnitPrice).ToString("N2")</td>
+                                        <td>
+                                            <form asp-action="SubmitRating" asp-controller="Books" method="post" class="star-rating">
+                                                <input type="hidden" name="bookId" value="@item.BookId" />
+                                                <input type="radio" id="star5-@item.BookId" name="rating" value="5" @(item.UserRating == 5 ? "checked" : "") />
+                                                <label for="star5-@item.BookId" title="5 stars">★</label>
+                                                <input type="radio" id="star4-@item.BookId" name="rating" value="4" @(item.UserRating == 4 ? "checked" : "") />
+                                                <label for="star4-@item.BookId" title="4 stars">★</label>
+                                                <input type="radio" id="star3-@item.BookId" name="rating" value="3" @(item.UserRating == 3 ? "checked" : "") />
+                                                <label for="star3-@item.BookId" title="3 stars">★</label>
+                                                <input type="radio" id="star2-@item.BookId" name="rating" value="2" @(item.UserRating == 2 ? "checked" : "") />
+                                                <label for="star2-@item.BookId" title="2 stars">★</label>
+                                                <input type="radio" id="star1-@item.BookId" name="rating" value="1" @(item.UserRating == 1 ? "checked" : "") />
+                                                <label for="star1-@item.BookId" title="1 star">★</label>
+                                                <button type="submit" style="margin-left: 10px;"><i class="fas fa-star"></i> Rate</button>
+                                            </form>
+                                            @if (item.UserRating.HasValue)
+                                                    {
+                                            <div class="existing-rating">Your Rating: <span>@item.UserRating.Value</span>/5</div>
+                                                    }
+                                        </td>
+                                        <td>
+                                            <form asp-action="SubmitReview" asp-controller="Books" method="post" class="review-input">
+                                                <input type="hidden" name="bookId" value="@item.BookId" />
+                                                <textarea name="review" maxlength="50" placeholder="Write a review (max 50 chars)">@item.UserReview</textarea>
+                                                <button type="submit"><i class="fas fa-comment"></i> Submit</button>
+                                            </form>
+                                            @if (!string.IsNullOrEmpty(item.UserReview))
+                                                    {
+                                            <div class="existing-review">Your Review: <span>@item.UserReview</span></div>
+                                                    }
+                                        </td>
+                                    </tr>
+                                        }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        </div>
+    </div>
+
+    @section Scripts {
+        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+        <script>
+            function toggleDetails(orderId) {
+                var detailsRow = document.getElementById('details-' + orderId);
+                if (detailsRow.classList.contains('show')) {
+                    detailsRow.classList.remove('show');
+                } else {
+                    detailsRow.classList.add('show');
+                }
+            }
+        </script>
+    }

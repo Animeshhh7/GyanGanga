@@ -1,90 +1,339 @@
 @model GyanGanga.Web.Models.Classes.ShowBookDetails
 
 @{
-    ViewData["Title"] = Model.BookTitle;
+    ViewData["Title"] = Model?.BookTitle ?? "Book Details";
 }
 
 <style>
-    .book-details {
+    /* Page Layout */
+    .details-page {
+        min-height: calc(100vh - 50px);
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); /* Subtle gradient background */
+        padding: 30px 20px;
+        display: flex;
+        justify-content: flex-start; /* Align content to the left */
+        align-items: flex-start; /* Align content to the top */
+    }
+
+    /* Main Container */
+    .details-container {
+        width: 90%; /* Reduced width to fit within viewport */
+        max-width: 1100px; /* Adjusted max-width for better fit */
+        margin: 0 0 0 50px; /* Shift left with margin */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* Align content to the left */
+    }
+
+    /* Section Titles */
+    .details-header {
+        text-align: left; /* Align header text to the left */
+        margin-bottom: 40px;
+    }
+
+        .details-header h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            position: relative;
+            font-family: 'Playfair Display', serif;
+        }
+
+            .details-header h2::after {
+                content: '';
+                width: 60px;
+                height: 4px;
+                background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green underline */
+                position: absolute;
+                bottom: -10px;
+                left: 0; /* Align underline to the left */
+                border-radius: 2px;
+            }
+
+    /* Alerts */
+    .alert {
+        width: 100%;
+        max-width: 600px;
+        border-radius: 8px;
+        padding: 15px;
+        font-size: 1rem;
+        text-align: left;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .alert-warning {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    /* Book Details Card */
+    .book-details-card {
         display: flex;
         align-items: flex-start;
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        width: 100%;
         margin-bottom: 30px;
     }
 
-        .book-details img {
+        .book-details-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .book-details-card img {
             width: 300px;
             height: 400px;
             object-fit: cover;
             border-radius: 5px;
             margin-right: 30px;
+            border: 1px solid #ddd;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .book-details .details {
+            .book-details-card img:hover {
+                transform: scale(1.02);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            }
+
+        .book-details-card .details {
             flex: 1;
+            font-family: 'Roboto', sans-serif;
         }
 
-        .book-details h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .book-details p {
+        .book-details-card p {
             font-size: 1rem;
             margin-bottom: 10px;
             color: #666;
         }
 
-        .book-details .price {
+            .book-details-card p strong {
+                color: #333;
+                font-weight: 500;
+            }
+
+        .book-details-card .price {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #1a3c6d;
+            color: #4CAF50; /* Green for admin theme */
             margin-bottom: 20px;
         }
 
-        .book-details form {
+        /* Form Styling */
+        .book-details-card form {
             margin-bottom: 10px;
         }
+
+        .book-details-card .form-label {
+            font-size: 1rem;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .book-details-card .form-control {
+            padding: 8px 12px;
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            width: 100px;
+            transition: all 0.3s ease;
+        }
+
+            .book-details-card .form-control:focus {
+                border-color: #4A90E2;
+                box-shadow: 0 0 8px rgba(74, 144, 226, 0.2);
+                outline: none;
+            }
+
+    /* Buttons */
+    .btn {
+        padding: 8px 15px;
+        border-radius: 25px;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        border: none;
+    }
+
+    .btn-back {
+        background: #6c757d;
+        color: #ffffff;
+        margin-bottom: 20px;
+    }
+
+        .btn-back:hover {
+            background: #5a6268;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+    .btn-primary {
+        background: #4A90E2;
+        color: #ffffff;
+    }
+
+        .btn-primary:hover {
+            background: #3A80D2;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: #ffffff;
+    }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+    .btn i {
+        margin-right: 5px;
+    }
+
+    /* Responsive Adjustments */
+    @@media (max-width: 768px) {
+        .details-container {
+            width: 95%;
+            margin: 0 0 0 20px;
+        }
+
+        .details-header h2 {
+            font-size: 1.8rem;
+        }
+
+        .book-details-card {
+            flex-direction: column;
+            align-items: center;
+        }
+
+            .book-details-card img {
+                width: 200px;
+                height: 300px;
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+
+            .book-details-card .details {
+                text-align: center;
+            }
+
+            .book-details-card .price {
+                font-size: 1.3rem;
+            }
+
+            .book-details-card form {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .book-details-card .form-control {
+                width: 80px;
+            }
+    }
+
+    @@media (max-width: 480px) {
+        .details-container {
+            width: 100%;
+            margin: 0;
+        }
+
+        .details-header h2 {
+            font-size: 1.6rem;
+        }
+
+        .book-details-card img {
+            width: 150px;
+            height: 200px;
+        }
+
+        .book-details-card p {
+            font-size: 0.9rem;
+        }
+
+        .book-details-card .price {
+            font-size: 1.2rem;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            width: 100%;
+            text-align: center;
+        }
+    }
 </style>
 
-@if (Model == null)
-{
-<div class="alert alert-warning" role="alert">
-    Book not found.
-</div>
-}
-else
-{
-<div class="book-details">
-    @if (!string.IsNullOrEmpty(Model.CoverImagePath))
+<div class="details-page">
+    <div class="details-container">
+        <div class="details-header">
+            <h2>Book Details</h2>
+        </div>
+        <a href="@Url.Action("Index", "Books")" class="btn btn-back"><i class="fas fa-arrow-left"></i> Back to Catalogue</a>
+        @if (Model == null)
         {
-    <img src="@Model.CoverImagePath" alt="@Model.BookTitle">
+        <div class="alert alert-warning" role="alert">
+            Book not found.
+        </div>
         }
         else
         {
-    <img src="https://via.placeholder.com/300x400?text=@Model.BookTitle" alt="@Model.BookTitle">
-        }
-    <div class="details">
-        <h2>@Model.BookTitle</h2>
-        <p><strong>Author:</strong> @Model.BookAuthor</p>
-        <p><strong>Genre:</strong> @Model.BookGenre</p>
-        <p class="price">NPR @(Model.BookPrice * 133).ToString("N2")</p>
-        <p><strong>Format:</strong> @Model.BookFormat</p>
-        <p><strong>Stock:</strong> @Model.BookStock</p>
-        <p><strong>ISBN:</strong> @Model.BookIsbn</p>
-        <form asp-action="AddToCart" method="post" class="mb-3">
-            <input type="hidden" name="id" value="@Model.BookId" />
-            <div class="mb-3">
-                <label for="quantity" class="form-label">Quantity:</label>
-                <input type="number" name="quantity" id="quantity" value="1" min="1" class="form-control w-25 d-inline" />
+        <div class="book-details-card">
+            @if (!string.IsNullOrEmpty(Model.CoverImagePath))
+                {
+            <img src="@Model.CoverImagePath" alt="@Model.BookTitle">
+                }
+                else
+                {
+            <img src="https://via.placeholder.com/300x400?text=@Model.BookTitle" alt="@Model.BookTitle">
+                }
+            <div class="details">
+                <h2>@Model.BookTitle</h2>
+                <p><strong>Author:</strong> @Model.BookAuthor</p>
+                <p><strong>Genre:</strong> @Model.BookGenre</p>
+                <p class="price">NPR @(Model.BookPrice * 133).ToString("N2")</p>
+                <p><strong>Format:</strong> @Model.BookFormat</p>
+                <p><strong>Stock:</strong> @Model.BookStock</p>
+                <p><strong>ISBN:</strong> @Model.BookIsbn</p>
+                @if (User?.Identity?.IsAuthenticated == true)
+                    {
+                <form asp-action="AddToCart" method="post" class="mb-3">
+                    <input type="hidden" name="id" value="@Model.BookId" />
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity:</label>
+                        <input type="number" name="quantity" id="quantity" value="1" min="1" class="form-control d-inline" />
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                </form>
+                <form asp-action="SaveBook" method="post">
+                    <input type="hidden" name="id" value="@Model.BookId" />
+                    <button type="submit" class="btn btn-secondary"><i class="fas fa-bookmark"></i> Save Book</button>
+                </form>
+                    }
+                    else
+                    {
+                <p><a href="@Url.Action("Login", "Account")" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Login to Add to Cart or Save</a></p>
+                    }
             </div>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
-        <form asp-action="SaveBook" method="post">
-            <input type="hidden" name="id" value="@Model.BookId" />
-            <button type="submit" class="btn btn-secondary">Save Book</button>
-        </form>
+        </div>
+        }
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 }

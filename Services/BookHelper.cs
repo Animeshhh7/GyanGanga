@@ -260,7 +260,7 @@ namespace GyanGanga.Web.Services
             var order = new Order
             {
                 UserId = userId,
-                OrderDate = DateTime.UtcNow,
+                OrderDate = DateTime.UtcNow, // Already UTC
                 TotalPrice = cartItems.Sum(item => item.Quantity * item.BookPrice),
                 Status = "Pending"
             };
@@ -336,6 +336,7 @@ namespace GyanGanga.Web.Services
             if (order != null)
             {
                 order.Status = status;
+                // The value converter in MyDB.cs will handle OrderDate
                 _db.Orders.Update(order);
                 await _db.SaveChangesAsync();
             }

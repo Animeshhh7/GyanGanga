@@ -5,23 +5,29 @@
     }
 
     <style>
-        /* Ensure the page takes up the full viewport height */
+        /* Page Layout */
         .orders-page {
-            min-height: calc(100vh - 50px); /* Adjust for footer height */
+            min-height: calc(100vh - 50px);
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); /* Subtle gradient background */
             padding: 30px 20px;
+            display: flex;
+            justify-content: flex-start; /* Align content to the left */
+            align-items: flex-start; /* Align content to the top */
         }
 
-        /* Container for the orders */
+        /* Main Container */
         .orders-container {
-            width: 100%;
-            max-width: 1200px; /* Wider container for better layout of cards */
-            margin: 0 auto;
+            width: 90%; /* Reduced width to fit within viewport */
+            max-width: 1100px; /* Adjusted max-width for better fit */
+            margin: 0 0 0 50px; /* Shift left with margin */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align content to the left */
         }
 
-        /* Header section */
+        /* Section Titles */
         .orders-header {
-            text-align: center;
+            text-align: left; /* Align header text to the left */
             margin-bottom: 40px;
         }
 
@@ -40,153 +46,304 @@
                     background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green underline */
                     position: absolute;
                     bottom: -10px;
-                    left: 50%;
-                    transform: translateX(-50%);
+                    left: 0; /* Align underline to the left */
                     border-radius: 2px;
                 }
 
-        /* No orders message */
-        .alert-info {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #d1ecf1;
-            color: #0c5460;
+        /* Alerts */
+        .alert {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 0 20px 0;
             border-radius: 8px;
             padding: 15px;
             font-size: 1rem;
-            text-align: center;
+            text-align: left;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* Order list styling */
-        .order-list {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
         }
 
-        /* Order card styling */
-        .order-card {
-            background: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
         }
 
-            .order-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-            }
-
-            .order-card .order-id {
-                font-size: 1.6rem;
-                font-weight: 600;
-                color: #333;
-                margin-bottom: 10px;
-            }
-
-            .order-card .user-info {
-                font-size: 0.95rem;
-                color: #666;
-                margin-bottom: 10px;
-            }
-
-            .order-card .order-date {
-                font-size: 0.95rem;
-                color: #666;
-                margin-bottom: 10px;
-            }
-
-            .order-card .total-price {
-                font-size: 1.2rem;
-                font-weight: 700;
-                color: #4CAF50; /* Green for admin theme */
-                margin-bottom: 15px;
-            }
-
-            .order-card .status {
-                font-size: 0.95rem;
-                font-weight: 500;
-                color: #333;
-                margin-bottom: 15px;
-            }
-
-        /* Order items section */
-        .order-items {
-            margin-top: 15px;
-            padding: 15px;
-            border-top: 1px solid #ddd;
-            background: #f9f9f9;
+        /* Table Container */
+        .table-container {
+            max-height: 600px; /* Adjust height as needed */
+            overflow-y: auto; /* Enable vertical scrolling */
+            overflow-x: auto; /* Enable horizontal scrolling if needed */
+            border: 1px solid #ddd;
             border-radius: 8px;
+            background: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%; /* Ensure it takes the full width of the container */
+            margin-bottom: 20px;
         }
 
-            .order-items h6 {
-                font-size: 1.1rem;
+        /* Orders Table */
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1rem; /* Slightly larger font for readability */
+        }
+
+            .orders-table th,
+            .orders-table td {
+                padding: 15px 20px; /* Increased padding for larger cells */
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+                min-width: 100px; /* Minimum width for columns to ensure spacing */
+            }
+
+            .orders-table th {
+                background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green gradient */
+                color: #ffffff;
                 font-weight: 600;
-                color: #333;
-                margin-bottom: 15px;
+                position: sticky;
+                top: 0;
+                z-index: 1;
+                cursor: pointer;
             }
 
-            .order-items ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
+            .orders-table tbody tr:hover {
+                background-color: #f8f9fa;
             }
 
-            .order-items li {
-                font-size: 0.95rem;
-                color: #666;
-                margin-bottom: 10px;
-                line-height: 1.5;
+            .orders-table .status-pending {
+                color: #e67e22;
+                font-weight: 600;
             }
 
-        /* Actions (status update) */
-        .order-card .actions {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
+            .orders-table .status-shipped {
+                color: #1e90ff;
+                font-weight: 600;
+            }
+
+            .orders-table .status-delivered {
+                color: #28a745;
+                font-weight: 600;
+            }
+
+            .orders-table .status-cancelled {
+                color: #dc3545;
+                font-weight: 600;
+            }
+
+            .orders-table .sort-icon {
+                margin-left: 5px;
+                font-size: 0.8rem;
+                color: #ffffff;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .orders-table th.sortable:hover .sort-icon {
+                opacity: 1;
+            }
+
+            .orders-table th.sortable.asc .sort-icon::before {
+                content: '\f062'; /* Font Awesome up arrow */
+                opacity: 1;
+            }
+
+            .orders-table th.sortable.desc .sort-icon::before {
+                content: '\f063'; /* Font Awesome down arrow */
+                opacity: 1;
+            }
+
+            .orders-table .btn-details {
+                padding: 8px 15px;
+                border-radius: 25px;
+                background: #4A90E2;
+                border: none;
+                font-weight: 600;
+                color: #ffffff;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                cursor: pointer;
+            }
+
+                .orders-table .btn-details:hover {
+                    background: #3A80D2;
+                    transform: translateY(-3px);
+                    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+                }
+
+                .orders-table .btn-details i {
+                    margin-right: 5px;
+                }
+
+        /* Order Items Details (Hidden by Default) */
+        .order-items-details {
+            display: none;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #ddd;
         }
 
-            .order-card .actions form {
-                display: flex;
-                gap: 10px;
-                align-items: center;
+            .order-items-details.show {
+                display: table-row;
             }
 
-            .order-card .actions select {
-                padding: 8px 15px;
-                border-radius: 8px;
+            .order-items-details td {
+                padding: 15px 20px;
+            }
+
+        .order-items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .order-items-table th,
+            .order-items-table td {
+                padding: 10px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+                min-width: 80px;
+            }
+
+            .order-items-table th {
+                background: #ffffff;
+                color: #2d3436;
+                font-weight: 600;
+                font-size: 0.9rem;
+                text-transform: uppercase;
+            }
+
+            .order-items-table td {
+                color: #666;
+                font-size: 0.9rem;
+            }
+
+            .order-items-table .book-title {
+                font-weight: 500;
+                color: #2d3436;
+            }
+
+        /* Actions (Status Update) */
+        .actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+            .actions select {
+                padding: 8px 12px;
+                border-radius: 25px;
                 border: 1px solid #ddd;
-                font-size: 0.95rem;
+                font-size: 0.9rem;
                 background-color: #fff;
                 color: #333;
                 transition: border-color 0.3s ease;
             }
 
-                .order-card .actions select:focus {
-                    border-color: #4CAF50;
+                .actions select:focus {
+                    border-color: #4A90E2;
+                    box-shadow: 0 0 8px rgba(74, 144, 226, 0.2);
                     outline: none;
-                    box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
                 }
 
-            .order-card .actions button {
-                padding: 10px 20px;
-                border-radius: 8px;
-                font-size: 0.95rem;
+            .actions button {
+                padding: 8px 15px;
+                border-radius: 25px;
+                background: #4A90E2;
+                border: none;
                 font-weight: 600;
                 color: #ffffff;
-                background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green gradient */
-                border: none;
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
             }
 
-                .order-card .actions button:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+                .actions button:hover {
+                    background: #3A80D2;
+                    transform: translateY(-3px);
+                    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
                 }
+
+                .actions button:disabled {
+                    background: #ccc;
+                    cursor: not-allowed;
+                    transform: none;
+                    box-shadow: none;
+                }
+
+        /* Responsive Adjustments */
+        @@media (max-width: 768px) {
+            .orders-container {
+                width: 95%;
+                margin: 0 0 0 20px;
+            }
+
+            .orders-header h2 {
+                font-size: 1.8rem;
+            }
+
+            .orders-table th,
+            .orders-table td {
+                padding: 10px;
+                font-size: 0.9rem;
+                min-width: 80px;
+            }
+
+            .order-items-table th,
+            .order-items-table td {
+                padding: 8px;
+                font-size: 0.85rem;
+            }
+
+            .orders-table .btn-details,
+            .actions button {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+
+            .actions select {
+                width: 100%;
+            }
+
+            .actions {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .orders-container {
+                width: 100%;
+                margin: 0;
+            }
+
+            .orders-header h2 {
+                font-size: 1.6rem;
+            }
+
+            .orders-table th,
+            .orders-table td {
+                padding: 8px;
+                font-size: 0.85rem;
+                min-width: 60px;
+            }
+
+            .order-items-table th,
+            .order-items-table td {
+                padding: 6px;
+                font-size: 0.8rem;
+            }
+
+            .orders-table .btn-details,
+            .actions button {
+                width: 100%;
+                text-align: center;
+            }
+        }
     </style>
 
     <div class="orders-page">
@@ -194,6 +351,12 @@
             <div class="orders-header">
                 <h2>Manage Orders</h2>
             </div>
+            @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success" role="alert">
+                @TempData["Success"]
+            </div>
+        }
             @if (Model == null || Model.Count == 0)
         {
             <div class="alert alert-info" role="alert">
@@ -202,38 +365,155 @@
         }
         else
         {
-            <div class="order-list">
-                @foreach (var order in Model)
-                {
-                <div class="order-card">
-                    <h5 class="order-id">Order ID: @order.OrderId</h5>
-                    <p class="user-info">User: @order.UserEmail (ID: @order.UserId)</p>
-                    <p class="order-date">Order Date: @order.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
-                    <p class="total-price">Total: NPR @((order.TotalPrice * 133).ToString("N2"))</p>
-                    <p class="status">Status: @order.Status</p>
-                    <div class="order-items">
-                        <h6>Order Items:</h6>
-                        <ul>
-                            @foreach (var item in order.OrderItems)
-                                {
-                            <li>@item.BookTitle (ID: @item.BookId) - @item.Quantity x NPR @((item.UnitPrice * 133).ToString("N2"))</li>
-                                }
-                        </ul>
-                    </div>
-                    <div class="actions">
-                        <form asp-action="UpdateOrderStatus" asp-route-orderId="@order.OrderId" method="post">
-                            <select name="status">
-                                <option value="Pending" selected="@(order.Status == "Pending")">Pending</option>
-                                <option value="Shipped" selected="@(order.Status == "Shipped")">Shipped</option>
-                                <option value="Delivered" selected="@(order.Status == "Delivered")">Delivered</option>
-                                <option value="Cancelled" selected="@(order.Status == "Cancelled")">Cancelled</option>
-                            </select>
-                            <button type="submit">Update Status</button>
-                        </form>
-                    </div>
-                </div>
-                }
+            <div class="table-container">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-sort="orderId">Order ID <span class="sort-icon"></span></th>
+                            <th>User</th>
+                            <th class="sortable" data-sort="orderDate">Order Date <span class="sort-icon"></span></th>
+                            <th class="sortable" data-sort="totalPrice">Total Price <span class="sort-icon"></span></th>
+                            <th>Status</th>
+                            <th>Details</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model)
+                        {
+                        <tr>
+                            <td>#@order.OrderId</td>
+                            <td>@order.UserEmail (ID: @order.UserId)</td>
+                            <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>NPR @((order.TotalPrice * 133).ToString("N2"))</td>
+                            <td class="@(order.Status == "Pending" ? "status-pending" : order.Status == "Shipped" ? "status-shipped" : order.Status == "Delivered" ? "status-delivered" : "status-cancelled")">@order.Status</td>
+                            <td>
+                                <button class="btn-details" onclick="toggleDetails(@order.OrderId)">
+                                    <i class="fas fa-eye"></i> View Items
+                                </button>
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <form asp-action="UpdateOrderStatus" asp-route-orderId="@order.OrderId" method="post" class="status-form">
+                                        <select name="status" onchange="this.form.submit()" id="status-@order.OrderId">
+                                            <option value="Pending" selected="@(order.Status == "Pending")">Pending</option>
+                                            <option value="Shipped" selected="@(order.Status == "Shipped")">Shipped</option>
+                                            <option value="Delivered" selected="@(order.Status == "Delivered")">Delivered</option>
+                                            <option value="Cancelled" selected="@(order.Status == "Cancelled")">Cancelled</option>
+                                        </select>
+                                        <button type="submit" disabled><i class="fas fa-sync-alt"></i> Update</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr id="details-@order.OrderId" class="order-items-details">
+                            <td colspan="7">
+                                <table class="order-items-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Book Title</th>
+                                            <th>Quantity</th>
+                                            <th>Unit Price</th>
+                                            <th>Total Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in order.OrderItems)
+                                            {
+                                        <tr>
+                                            <td class="book-title">@item.BookTitle (ID: @item.BookId)</td>
+                                            <td>@item.Quantity</td>
+                                            <td>NPR @((item.UnitPrice * 133).ToString("N2"))</td>
+                                            <td>NPR @((item.Quantity * item.UnitPrice * 133).ToString("N2"))</td>
+                                        </tr>
+                                            }
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         }
         </div>
     </div>
+
+    @section Scripts {
+        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+        <script>
+            function toggleDetails(orderId) {
+                var detailsRow = document.getElementById('details-' + orderId);
+                if (detailsRow.classList.contains('show')) {
+                    detailsRow.classList.remove('show');
+                } else {
+                    detailsRow.classList.add('show');
+                }
+            }
+
+            // Sorting functionality
+            document.querySelectorAll('.sortable').forEach(header => {
+                header.addEventListener('click', () => {
+                    const sortKey = header.dataset.sort;
+                    const isAsc = !header.classList.contains('asc');
+                    sortTable(sortKey, isAsc);
+                    updateSortIcons(header, isAsc);
+                });
+            });
+
+            function sortTable(key, isAsc) {
+                const table = document.querySelector('.orders-table');
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr:not(.order-items-details)'));
+                const detailsRows = Array.from(tbody.querySelectorAll('tr.order-items-details'));
+
+                // Sort the main rows
+                rows.sort((a, b) => {
+                    let aValue, bValue;
+                    switch (key) {
+                        case 'orderId':
+                            aValue = parseInt(a.cells[0].textContent.replace('#', ''));
+                            bValue = parseInt(b.cells[0].textContent.replace('#', ''));
+                            break;
+                        case 'orderDate':
+                            aValue = new Date(a.cells[2].textContent);
+                            bValue = new Date(b.cells[2].textContent);
+                            break;
+                        case 'totalPrice':
+                            aValue = parseFloat(a.cells[3].textContent.replace('NPR ', '').replace(',', ''));
+                            bValue = parseFloat(b.cells[3].textContent.replace('NPR ', '').replace(',', ''));
+                            break;
+                        default:
+                            return 0;
+                    }
+                    return isAsc ? (aValue > bValue ? 1 : -1) : (aValue < bValue ? 1 : -1);
+                });
+
+                // Rebuild the tbody with sorted rows and their details
+                tbody.innerHTML = '';
+                rows.forEach((row, index) => {
+                    tbody.appendChild(row);
+                    const orderId = parseInt(row.cells[0].textContent.replace('#', ''));
+                    const detailsRow = detailsRows.find(dr => dr.id === `details-${orderId}`);
+                    if (detailsRow) {
+                        tbody.appendChild(detailsRow);
+                    }
+                });
+            }
+
+            function updateSortIcons(header, isAsc) {
+                document.querySelectorAll('.sortable').forEach(h => {
+                    h.classList.remove('asc', 'desc');
+                });
+                header.classList.add(isAsc ? 'asc' : 'desc');
+            }
+
+            // Enable the update button when the status changes
+            document.querySelectorAll('.status-form select').forEach(select => {
+                select.addEventListener('change', () => {
+                    const button = select.nextElementSibling;
+                    button.disabled = false;
+                });
+            });
+        </script>
+    }

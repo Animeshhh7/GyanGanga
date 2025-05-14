@@ -435,5 +435,17 @@ namespace GyanGanga.Web.Controllers
 
             return View(viewModel);
         }
+
+        public async Task UpdateOrderStatus(int orderId, string status)
+        {
+            var order = await _db.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
+            if (order != null)
+            {
+                order.Status = status;
+                _db.Orders.Update(order);
+                await _db.SaveChangesAsync();
+                TempData["Success"] = $"Order #{orderId} status updated to {status} successfully!";
+            }
+        }
     }
 }

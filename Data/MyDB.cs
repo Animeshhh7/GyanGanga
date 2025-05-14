@@ -4,6 +4,7 @@ using GyanGanga.Web.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GyanGanga.Web.Data
 {
@@ -23,6 +24,34 @@ namespace GyanGanga.Web.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            // Apply value converter for all DateTime properties to ensure UTC
+            var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
+                v => v.Kind == DateTimeKind.Utc ? v : v.ToUniversalTime(),
+                v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
+            var nullableDateTimeConverter = new ValueConverter<DateTime?, DateTime?>(
+                v => v.HasValue ? (v.Value.Kind == DateTimeKind.Utc ? v.Value : v.Value.ToUniversalTime()) : v,
+                v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v);
+
+            foreach (var entityType in builder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    if (property.ClrType == typeof(DateTime))
+                    {
+                        builder.Entity(entityType.Name)
+                            .Property(property.Name)
+                            .HasConversion(dateTimeConverter);
+                    }
+                    else if (property.ClrType == typeof(DateTime?))
+                    {
+                        builder.Entity(entityType.Name)
+                            .Property(property.Name)
+                            .HasConversion(nullableDateTimeConverter);
+                    }
+                }
+            }
 
             // Custom entities
             builder.Entity<Book>().ToTable("book_list");

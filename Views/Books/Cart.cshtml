@@ -5,43 +5,100 @@
     }
 
     <style>
+        /* Page Layout */
+        .cart-page {
+            min-height: calc(100vh - 50px);
+            background: #f7f9fc;
+            padding: 20px 20px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Main Container */
+        .cart-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 0 0 0; /* Align with sidebar */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align content to the left */
+        }
+
         /* Section Titles */
         .section-title {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 700;
-            color: #333;
-            margin: 60px 0 30px;
-            text-align: center;
+            color: #2d3436;
+            margin: 20px 0;
             position: relative;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-align: left;
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(90deg, #74b9ff, #4a90e2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
             .section-title::before {
                 content: '';
-                width: 90px;
-                height: 5px;
-                background: linear-gradient(90deg, #4A90E2, #3A80D2);
+                width: 80px;
+                height: 4px;
+                background: linear-gradient(90deg, #74b9ff, #4a90e2);
                 position: absolute;
-                bottom: -15px;
-                left: 50%;
-                transform: translateX(-50%);
-                border-radius: 5px;
+                bottom: -10px;
+                left: 0;
+                border-radius: 2px;
             }
+
+        /* Alerts */
+        .alert {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 0 20px 0;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1rem;
+            text-align: left;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
 
         /* Cart Item Card */
         .cart-item {
             display: flex;
             background: #ffffff;
             border-radius: 15px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
             margin-bottom: 20px;
             padding: 15px;
             transition: all 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            background: linear-gradient(145deg, #ffffff, #f7f9fc);
+            width: 100%;
+            max-width: 900px;
         }
 
             .cart-item:hover {
                 transform: translateY(-5px);
-                box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.18);
+                background: linear-gradient(145deg, #f7f9fc, #ffffff);
             }
 
             .cart-item img {
@@ -50,27 +107,37 @@
                 object-fit: cover;
                 border-radius: 10px;
                 margin-right: 20px;
+                border-bottom: 3px solid #74b9ff;
+                filter: brightness(95%);
+                transition: all 0.3s ease;
+            }
+
+            .cart-item:hover img {
+                filter: brightness(100%);
             }
 
         .cart-item-details {
             flex-grow: 1;
+            text-align: left;
         }
 
             .cart-item-details .title {
                 font-size: 1.5rem;
                 font-weight: 600;
-                color: #333;
+                color: #2d3436;
                 margin-bottom: 5px;
+                font-family: 'Roboto', sans-serif;
             }
 
             .cart-item-details .author {
                 font-size: 1rem;
-                color: #666;
+                color: #7f8c8d;
                 margin-bottom: 5px;
+                font-family: 'Roboto', sans-serif;
             }
 
             .cart-item-details .rating {
-                color: #f39c12;
+                color: #f1c40f;
                 font-size: 1.1rem;
                 margin-bottom: 5px;
             }
@@ -78,14 +145,16 @@
             .cart-item-details .price {
                 font-size: 1.2rem;
                 font-weight: 700;
-                color: #4A90E2;
+                color: #74b9ff;
                 margin-bottom: 5px;
+                font-family: 'Roboto', sans-serif;
             }
 
             .cart-item-details .total-price {
                 font-size: 1.1rem;
-                color: #333;
+                color: #2d3436;
                 margin-bottom: 10px;
+                font-family: 'Roboto', sans-serif;
             }
 
         .quantity-control {
@@ -101,20 +170,27 @@
                 text-align: center;
                 border: 1px solid #ddd;
                 border-radius: 5px;
+                font-family: 'Roboto', sans-serif;
             }
 
             .quantity-control button {
                 padding: 5px 10px;
                 border: none;
-                background: #4A90E2;
+                background: #74b9ff;
                 color: #ffffff;
                 border-radius: 5px;
                 cursor: pointer;
                 transition: all 0.3s ease;
+                font-family: 'Roboto', sans-serif;
             }
 
                 .quantity-control button:hover {
-                    background: #3A80D2;
+                    background: #4a90e2;
+                }
+
+                .quantity-control button:disabled {
+                    background: #b2bec3;
+                    cursor: not-allowed;
                 }
 
         .cart-item-actions {
@@ -131,53 +207,76 @@
                 font-weight: 600;
                 transition: all 0.3s ease;
                 text-decoration: none;
+                font-family: 'Roboto', sans-serif;
             }
 
                 .cart-item-actions .btn-remove:hover {
                     background: #c82333;
                     transform: translateY(-3px);
-                    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+                    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+                }
+
+                .cart-item-actions .btn-remove i {
+                    margin-right: 5px;
                 }
 
         /* Cart Summary */
         .cart-summary {
             background: #ffffff;
             border-radius: 15px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
             padding: 20px;
             margin-top: 20px;
-            text-align: center;
+            text-align: left;
+            width: 100%;
+            max-width: 900px;
+            background: linear-gradient(145deg, #ffffff, #f7f9fc);
         }
 
             .cart-summary h3 {
                 font-size: 1.8rem;
-                font-weight: 600;
-                color: #333;
+                font-weight: 700;
+                color: #2d3436;
                 margin-bottom: 15px;
+                font-family: 'Playfair Display', serif;
+                background: linear-gradient(90deg, #74b9ff, #4a90e2);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
             }
 
             .cart-summary p {
                 font-size: 1.2rem;
                 color: #666;
                 margin-bottom: 10px;
+                font-family: 'Roboto', sans-serif;
+            }
+
+            .cart-summary .button-group {
+                display: flex;
+                gap: 10px;
+                justify-content: flex-start;
             }
 
             .cart-summary .btn-checkout {
                 padding: 12px 30px;
                 border-radius: 25px;
-                background: #4A90E2;
+                background: #74b9ff;
                 border: none;
                 font-weight: 600;
                 color: #ffffff;
                 transition: all 0.3s ease;
                 text-decoration: none;
-                margin-right: 10px;
+                font-family: 'Roboto', sans-serif;
             }
 
                 .cart-summary .btn-checkout:hover {
-                    background: #3A80D2;
+                    background: #4a90e2;
                     transform: translateY(-3px);
-                    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+                    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+                }
+
+                .cart-summary .btn-checkout i {
+                    margin-right: 5px;
                 }
 
             .cart-summary .btn-continue {
@@ -189,79 +288,164 @@
                 color: #ffffff;
                 transition: all 0.3s ease;
                 text-decoration: none;
+                font-family: 'Roboto', sans-serif;
             }
 
                 .cart-summary .btn-continue:hover {
                     background: #5a6268;
                     transform: translateY(-3px);
-                    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+                    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
                 }
+
+                .cart-summary .btn-continue i {
+                    margin-right: 5px;
+                }
+
+        /* Responsive Adjustments */
+        @@media (max-width: 768px) {
+            .cart-item {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+                .cart-item img {
+                    margin-right: 0;
+                    margin-bottom: 15px;
+                }
+
+            .cart-item-actions {
+                justify-content: center;
+            }
+
+            .cart-summary .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .cart-summary .btn-checkout, .cart-summary .btn-continue {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .cart-item-details .title {
+                font-size: 1.2rem;
+            }
+
+            .cart-item-details .price, .cart-item-details .total-price {
+                font-size: 1rem;
+            }
+
+            .cart-summary h3 {
+                font-size: 1.5rem;
+            }
+
+            .cart-summary p {
+                font-size: 1rem;
+            }
+        }
     </style>
 
-    <h2 class="section-title">Your Cart</h2>
-    @if (TempData["Success"] != null)
-{
-    <div class="alert alert-success text-center" role="alert">
-        @TempData["Success"]
-    </div>
-}
-    @if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger text-center" role="alert">
-        @TempData["Error"]
-    </div>
-}
-    @if (Model == null || Model.Count == 0)
-{
-    <div class="alert alert-info text-center" role="alert">
-        Your cart is empty.
-    </div>
-}
-else
-{
-    @foreach (var book in Model)
-    {
-    <div class="cart-item">
-        <img src="https://via.placeholder.com/100x150?text=@(book.BookTitle)" alt="@(book.BookTitle)">
-        <div class="cart-item-details">
-            <h5 class="title">@book.BookTitle</h5>
-            <p class="author">@book.BookAuthor</p>
-            <div class="rating">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-                <span>(@book.Rating)</span>
+    <div class="cart-page">
+        <div class="cart-container">
+            <h2 class="section-title">Your Cart</h2>
+            @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success" role="alert">
+                @TempData["Success"]
             </div>
-            <p class="price">NPR @(book.BookPrice * 133).ToString("N2")</p>
-            <div class="quantity-control">
-                <form asp-controller="Books" asp-action="UpdateCartItemQuantity" method="post" class="d-inline">
-                    <input type="hidden" name="id" value="@(book.BookId)" />
-                    <button type="submit" name="quantity" value="@(book.Quantity - 1)" @(book.Quantity <= 1 ? "disabled" : "")>-</button>
-                    <input type="text" value="@book.Quantity" readonly />
-                    <button type="submit" name="quantity" value="@(book.Quantity + 1)">+</button>
-                </form>
+        }
+            @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @TempData["Error"]
             </div>
-            <p class="total-price">Total: NPR @((book.BookPrice * book.Quantity * 133).ToString("N2"))</p>
-            <div class="cart-item-actions">
-                <form asp-controller="Books" asp-action="RemoveFromCart" method="post" class="d-inline">
-                    <input type="hidden" name="id" value="@(book.BookId)" />
-                    <button type="submit" class="btn-remove">Remove</button>
-                </form>
+        }
+            @if (Model == null || Model.Count == 0)
+        {
+            <div class="alert alert-info" role="alert">
+                Your cart is empty.
             </div>
-        </div>
-    </div>
-    }
+        }
+        else
+        {
+            @foreach (var book in Model)
+            {
+            <div class="cart-item">
+                @if (!string.IsNullOrEmpty(book.CoverImagePath))
+                    {
+                <img src="@book.CoverImagePath" alt="@(book.BookTitle)">
+                    }
+                    else
+                    {
+                <img src="https://via.placeholder.com/100x150?text=@(book.BookTitle)" alt="@(book.BookTitle)">
+                    }
+                <div class="cart-item-details">
+                    <h5 class="title">@book.BookTitle</h5>
+                    <p class="author">@book.BookAuthor</p>
+                    <div class="rating">
+                        @{
+                                int fullStars = (int)book.Rating;
+                                bool hasHalfStar = book.Rating - fullStars >= 0.5m;
+                                for (int i = 0; i < fullStars; i++)
+                                {
+                            <i class="fas fa-star"></i>
+                                }
+                                if (hasHalfStar)
+                                {
+                            <i class="fas fa-star-half-alt"></i>
+                                    fullStars++;
+                                }
+                                for (int i = fullStars; i < 5; i++)
+                                {
+                            <i class="far fa-star"></i>
+                                }
+                        }
+                        <span>(@book.Rating)</span>
+                    </div>
+                    <p class="price">Rs @book.BookPrice.ToString("N2")</p>
+                    <div class="quantity-control">
+                        <form asp-controller="Books" asp-action="UpdateCartItemQuantity" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@(book.BookId)" />
+                            <button type="submit" name="quantity" value="@(book.Quantity - 1)" @(book.Quantity <= 1 ? "disabled" : "")>-</button>
+                            <input type="text" value="@book.Quantity" readonly />
+                            <button type="submit" name="quantity" value="@(book.Quantity + 1)">+</button>
+                        </form>
+                    </div>
+                    <p class="total-price">Total: Rs @((book.BookPrice * book.Quantity).ToString("N2"))</p>
+                    <div class="cart-item-actions">
+                        <form asp-controller="Books" asp-action="RemoveFromCart" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@(book.BookId)" />
+                            <button type="submit" class="btn-remove"><i class="fas fa-trash-alt"></i> Remove</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            }
 
  <!-- Cart Summary -->
-    <div class="cart-summary">
-        <h3>Cart Summary</h3>
-        <p>Total Items: @ViewBag.TotalItems</p>
-        <p>Total Price: NPR @((Convert.ToDecimal(ViewBag.TotalPrice) * 133).ToString("N2"))</p>
-        <form asp-controller="Books" asp-action="Checkout" method="post" class="d-inline">
-            <button type="submit" class="btn-checkout">Checkout</button>
-        </form>
-        <a href="@Url.Action("Index", "Books")" class="btn-continue">Continue Shopping</a>
+            <div class="cart-summary">
+                <h3>Cart Summary</h3>
+                <p>Total Items: @ViewBag.TotalItems</p>
+                <p>Total Price: Rs @((Convert.ToDecimal(ViewBag.TotalPrice)).ToString("N2"))</p>
+                <div class="button-group">
+                    <form asp-controller="Books" asp-action="Checkout" method="post" class="d-inline">
+                        <button type="submit" class="btn-checkout"><i class="fas fa-shopping-cart"></i> Checkout</button>
+                    </form>
+                    <a href="@Url.Action("Index", "Books")" class="btn-continue"><i class="fas fa-arrow-left"></i> Continue Shopping</a>
+                </div>
+            </div>
+        }
+        </div>
     </div>
-}
+
+    @section Scripts {
+        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    }

@@ -11,5 +11,6 @@ namespace GyanGanga.Web.Models.Classes
         public int BookStock { get; set; }
         public string? BookIsbn { get; set; }
         public decimal? Rating { get; set; }
+        public string? CoverImagePath { get; set; } // Added for image upload
     }
 }

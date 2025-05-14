@@ -8,22 +8,31 @@ using GyanGanga.Web.Services.Interfaces;
 using GyanGanga.Web.Models.Classes;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<MyDB>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<MyDB>().AddDefaultTokenProviders();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<MyDB>()
+    .AddDefaultTokenProviders();
 builder.Services.AddScoped<IBookHelper, BookHelper>();
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
-app.UseDeveloperExceptionPage();
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(); // Ensure static files (e.g., images in wwwroot) are served
+
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

@@ -32,12 +32,13 @@ namespace GyanGanga.Web.Services
                 BookStock = b.BookStock,
                 BookIsbn = b.BookIsbn ?? "",
                 Rating = b.Rating ?? 4.5m,
-                Quantity = 0
+                Quantity = 0,
+                CoverImagePath = b.CoverImagePath ?? "" // Add fallback for null
             }).ToList();
             return result;
         }
 
-        public async Task<Book?> GetBookEntityById(int id) // Changed to Task<Book?>
+        public async Task<Book?> GetBookEntityById(int id)
         {
             return await _db.BookList.FindAsync(id);
         }
@@ -63,6 +64,7 @@ namespace GyanGanga.Web.Services
                 existingBook.BookStock = book.BookStock;
                 existingBook.BookIsbn = book.BookIsbn;
                 existingBook.Rating = book.Rating;
+                existingBook.CoverImagePath = book.CoverImagePath;
                 _db.BookList.Update(existingBook);
                 await _db.SaveChangesAsync();
             }
@@ -98,7 +100,8 @@ namespace GyanGanga.Web.Services
                 BookPrice = book.BookPrice,
                 BookFormat = book.BookFormat,
                 BookStock = book.BookStock,
-                BookIsbn = book.BookIsbn
+                BookIsbn = book.BookIsbn,
+                CoverImagePath = book.CoverImagePath ?? "" // Add fallback for null
             };
             return result;
         }
@@ -201,7 +204,8 @@ namespace GyanGanga.Web.Services
                 BookIsbn = x.Book.BookIsbn ?? "",
                 Rating = x.Book.Rating ?? 4.5m,
                 Quantity = 0,
-                IsBookmarked = true
+                IsBookmarked = true,
+                CoverImagePath = x.Book.CoverImagePath ?? "" // Add fallback for null
             }).ToList() : new List<ShowBook>();
             return result;
         }
@@ -224,7 +228,8 @@ namespace GyanGanga.Web.Services
                 BookStock = x.Book.BookStock,
                 BookIsbn = x.Book.BookIsbn ?? "",
                 Rating = x.Book.Rating ?? 4.5m,
-                Quantity = x.CartBook.Quantity
+                Quantity = x.CartBook.Quantity,
+                CoverImagePath = x.Book.CoverImagePath ?? "" // Add fallback for null
             }).ToList() : new List<ShowBook>();
             return result;
         }
@@ -377,16 +382,13 @@ namespace GyanGanga.Web.Services
         {
             var report = new AdminReportViewModel();
 
-            // Total Sales, Orders, and Users
             var orders = await _db.Orders.ToListAsync();
             report.TotalSales = orders.Sum(o => o.TotalPrice);
             report.TotalOrders = orders.Count;
             report.TotalUsers = await _db.Users.CountAsync();
 
-            // Fetch all books to map BookId to BookTitle
             var books = await _db.BookList.ToDictionaryAsync(b => b.BookId, b => b.BookTitle);
 
-            // Top Selling Books
             var topSellingBooksQuery = await _db.OrderItems
                 .GroupBy(oi => oi.BookId)
                 .Select(g => new
@@ -402,17 +404,15 @@ namespace GyanGanga.Web.Services
             var topSellingBooks = topSellingBooksQuery.Select(tsb => new TopSellingBook
             {
                 BookId = tsb.BookId,
-                BookTitle = books.ContainsKey(tsb.BookId) ? books[tsb.BookId] : "Unknown",
+                BookTitle = books.ContainsKey(tsb.BookId) ? books[tsb.BookId]! : "Unknown",
                 TotalQuantitySold = tsb.TotalQuantitySold,
                 TotalRevenue = tsb.TotalRevenue
             }).ToList();
 
             report.TopSellingBooks = topSellingBooks;
 
-            // Fetch all users to map UserId to UserEmail
             var users = await _db.Users.ToDictionaryAsync(u => u.Id, u => u.Email);
 
-            // User Activity
             var userActivityQuery = await _db.Orders
                 .GroupBy(o => o.UserId)
                 .Select(g => new
@@ -426,8 +426,8 @@ namespace GyanGanga.Web.Services
 
             var userActivity = userActivityQuery.Select(ua => new UserActivity
             {
-                UserId = ua.UserId,
-                UserEmail = users.ContainsKey(ua.UserId) ? users[ua.UserId] : "Unknown",
+                UserId = ua.UserId!,
+                UserEmail = !string.IsNullOrEmpty(ua.UserId) && users.ContainsKey(ua.UserId) ? users[ua.UserId]! : "Unknown",
                 OrderCount = ua.OrderCount
             }).ToList();
 

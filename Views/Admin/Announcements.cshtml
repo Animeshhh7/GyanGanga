@@ -1,187 +1,187 @@
 @model List<GyanGanga.Web.Models.Classes.Announcement>
 
-@{
+    @{
     ViewData["Title"] = "Manage Announcements";
-}
-
-<style>
-    /* Ensure the page takes up the full viewport height */
-    .announcements-page {
-        min-height: calc(100vh - 50px); /* Adjust for footer height */
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); /* Subtle gradient background */
-        padding: 30px 20px;
     }
 
-    /* Container for the announcements */
-    .announcements-container {
-        width: 100%;
-        max-width: 1200px; /* Wider container for better layout of multiple cards */
-        margin: 0 auto;
-    }
+    <style>
+        /* Ensure the page takes up the full viewport height */
+        .announcements-page {
+            min-height: calc(100vh - 50px); /* Adjust for footer height */
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); /* Subtle gradient background */
+            padding: 30px 20px;
+            display: flex;
+            justify-content: flex-start; /* Align content to the left */
+            align-items: flex-start; /* Align content to the top */
+        }
 
-    /* Header section */
-    .announcements-header {
-        text-align: center;
-        margin-bottom: 40px;
-    }
+        /* Container for the announcements, shifted left */
+        .announcements-container {
+            width: 90%; /* Reduced width to fit within viewport */
+            max-width: 1100px; /* Adjusted max-width for better fit */
+            margin: 0 0 0 50px; /* Shift left with margin */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align content to the left */
+        }
 
-    .announcements-header h2 {
-        font-size: 2.2rem;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 20px;
-        position: relative;
-    }
+        /* Header section */
+        .announcements-header {
+            text-align: left; /* Align header text to the left */
+            margin-bottom: 40px;
+        }
 
-    .announcements-header h2::after {
-        content: '';
-        width: 60px;
-        height: 4px;
-        background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green underline */
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        border-radius: 2px;
-    }
+            .announcements-header h2 {
+                font-size: 2.2rem;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 20px;
+                position: relative;
+            }
 
-    /* Create announcement button */
-    .admin-action {
-        text-align: center;
-        margin-bottom: 40px;
-    }
+                .announcements-header h2::after {
+                    content: '';
+                    width: 60px;
+                    height: 4px;
+                    background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green underline */
+                    position: absolute;
+                    bottom: -10px;
+                    left: 0; /* Align underline to the left */
+                    border-radius: 2px;
+                }
 
-    .admin-action a {
-        display: inline-block;
-        padding: 12px 30px;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 600;
-        color: #ffffff;
-        background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%);
-        text-decoration: none;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+        /* Create announcement button */
+        .admin-action {
+            text-align: left; /* Align button to the left */
+            margin-bottom: 40px;
+        }
 
-    .admin-action a:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
-    }
+            .admin-action a {
+                display: inline-block;
+                padding: 12px 30px;
+                border-radius: 8px;
+                font-size: 1rem;
+                font-weight: 600;
+                color: #ffffff;
+                background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green gradient */
+                text-decoration: none;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
 
-    /* No announcements message */
-    .alert-info {
-        max-width: 600px;
-        margin: 0 auto;
-        background-color: #d1ecf1;
-        color: #0c5460;
-        border-radius: 8px;
-        padding: 15px;
-        font-size: 1rem;
-        text-align: center;
-    }
+                .admin-action a:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+                }
 
-    /* Announcement list styling */
-    .announcement-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Responsive grid */
-        gap: 30px;
-    }
+        /* No announcements message */
+        .alert-info {
+            max-width: 600px;
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1rem;
+            text-align: left; /* Align text to the left */
+        }
 
-    /* Announcement card styling */
-    .announcement-card {
-        background: #ffffff;
-        border-radius: 15px;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-    }
+        /* Table container with vertical scroll */
+        .table-container {
+            max-height: 600px; /* Adjust height as needed */
+            overflow-y: auto; /* Enable vertical scrolling */
+            overflow-x: auto; /* Enable horizontal scrolling if needed */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%; /* Ensure it takes the full width of the container */
+        }
 
-    .announcement-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-    }
+        /* Table styling */
+        .announcement-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1rem; /* Slightly larger font for readability */
+        }
 
-    .announcement-card .title {
-        font-size: 1.6rem;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 10px;
-        line-height: 1.3;
-    }
+            .announcement-table th,
+            .announcement-table td {
+                padding: 15px 20px; /* Increased padding for larger cells */
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+                min-width: 100px; /* Minimum width for columns to ensure spacing */
+            }
 
-    .announcement-card .content {
-        font-size: 1rem;
-        color: #666;
-        margin-bottom: 15px;
-        line-height: 1.6;
-    }
+            .announcement-table th {
+                background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green gradient */
+                color: #ffffff;
+                font-weight: 600;
+                position: sticky;
+                top: 0;
+                z-index: 1;
+            }
 
-    .announcement-card .posted-date {
-        font-size: 0.9rem;
-        color: #999;
-        margin-bottom: 10px;
-    }
+            .announcement-table tbody tr:hover {
+                background-color: #f8f9fa;
+            }
 
-    .announcement-card .status {
-        font-size: 0.95rem;
-        font-weight: 500;
-        color: #4CAF50;
-        margin-bottom: 15px;
-    }
+            /* Status styling */
+            .announcement-table .status-active {
+                color: #4CAF50; /* Green for active status */
+                font-weight: 500;
+            }
 
-    .announcement-card .status.inactive {
-        color: #dc3545; /* Red for inactive status */
-    }
+            .announcement-table .status-inactive {
+                color: #dc3545; /* Red for inactive status */
+                font-weight: 500;
+            }
 
-    /* Actions (buttons) */
-    .announcement-card .actions {
-        display: flex;
-        gap: 15px;
-        justify-content: center;
-        margin-top: 20px;
-    }
+            /* Actions buttons */
+            .announcement-table .actions {
+                display: flex;
+                gap: 10px;
+            }
 
-    .announcement-card .actions a,
-    .announcement-card .actions button {
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: #ffffff;
-        text-decoration: none;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border: none;
-    }
+                .announcement-table .actions a,
+                .announcement-table .actions button {
+                    padding: 8px 15px;
+                    border-radius: 5px;
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    color: #ffffff;
+                    text-decoration: none;
+                    border: none;
+                    cursor: pointer;
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                }
 
-    .announcement-card .actions .btn-edit {
-        background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%);
-    }
+                .announcement-table .actions .btn-edit {
+                    background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green gradient */
+                }
 
-    .announcement-card .actions .btn-edit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
-    }
+                    .announcement-table .actions .btn-edit:hover {
+                        transform: translateY(-1px);
+                        box-shadow: 0 3px 10px rgba(76, 175, 80, 0.3);
+                    }
 
-    .announcement-card .actions .btn-delete {
-        background: linear-gradient(90deg, #dc3545 0%, #c82333 100%);
-    }
+                .announcement-table .actions .btn-delete {
+                    background: linear-gradient(90deg, #dc3545 0%, #c82333 100%); /* Red gradient */
+                }
 
-    .announcement-card .actions .btn-delete:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
-    }
-</style>
+                    .announcement-table .actions .btn-delete:hover {
+                        transform: translateY(-1px);
+                        box-shadow: 0 3px 10px rgba(220, 53, 69, 0.3);
+                    }
+    </style>
 
-<div class="announcements-page">
-    <div class="announcements-container">
-        <div class="announcements-header">
-            <h2>Manage Announcements</h2>
-        </div>
-        <div class="admin-action">
-            <a href="@Url.Action("CreateAnnouncement", "Admin")">Create New Announcement</a>
-        </div>
-        @if (Model == null || Model.Count == 0)
+    <div class="announcements-page">
+        <div class="announcements-container">
+            <div class="announcements-header">
+                <h2>Manage Announcements</h2>
+            </div>
+            <div class="admin-action">
+                <a href="@Url.Action("CreateAnnouncement", "Admin")">Create New Announcement</a>
+            </div>
+            @if (Model == null || Model.Count == 0)
         {
             <div class="alert alert-info" role="alert">
                 No announcements found.
@@ -189,25 +189,40 @@
         }
         else
         {
-            <div class="announcement-list">
-                @foreach (var announcement in Model)
-                {
-                    <div class="announcement-card">
-                        <h5 class="title">@announcement.Title</h5>
-                        <p class="content">@announcement.Content</p>
-                        <p class="posted-date">Posted: @announcement.PostedDate.ToString("dd/MM/yyyy HH:mm")</p>
-                        <p class="status @(announcement.IsActive ? "" : "inactive")">
-                            Status: @(announcement.IsActive ? "Active" : "Inactive")
-                        </p>
-                        <div class="actions">
-                            <a href="@Url.Action("EditAnnouncement", "Admin", new { id = announcement.AnnouncementId })" class="btn-edit">Edit</a>
-                            <form asp-action="DeleteAnnouncement" asp-route-id="@announcement.AnnouncementId" method="post" class="d-inline">
-                                <button type="submit" class="btn-delete" onclick="return confirm('Are you sure you want to delete this announcement?')">Delete</button>
-                            </form>
-                        </div>
-                    </div>
-                }
+            <div class="table-container">
+                <table class="announcement-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Content</th>
+                            <th>Posted Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var announcement in Model)
+                        {
+                        <tr>
+                            <td>@announcement.AnnouncementId</td>
+                            <td>@announcement.Title</td>
+                            <td>@announcement.Content</td>
+                            <td>@announcement.PostedDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="@(announcement.IsActive ? "status-active" : "status-inactive")">
+                                @(announcement.IsActive ? "Active" : "Inactive")
+                            </td>
+                            <td class="actions">
+                                <a href="@Url.Action("EditAnnouncement", "Admin", new { id = announcement.AnnouncementId })" class="btn-edit">Edit</a>
+                                <form asp-action="DeleteAnnouncement" asp-route-id="@announcement.AnnouncementId" method="post" class="d-inline">
+                                    <button type="submit" class="btn-delete" onclick="return confirm('Are you sure you want to delete this announcement?')">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         }
+        </div>
     </div>
-</div>

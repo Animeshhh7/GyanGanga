@@ -86,6 +86,15 @@
                 outline: none;
             }
 
+    /* Current cover image styling */
+    .current-cover-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
     /* Validation error styling */
     .text-danger {
         font-size: 0.85rem;
@@ -144,7 +153,7 @@
                 <h2 class="card-title">Edit Book</h2>
             </div>
             <div class="card-body">
-                <form asp-action="EditBook" method="post">
+                <form asp-action="EditBook" method="post" enctype="multipart/form-data">
                     <input type="hidden" asp-for="BookId" />
                     <div class="form-group">
                         <label asp-for="BookTitle" class="form-label">Book Title</label>
@@ -169,8 +178,8 @@
                         <span asp-validation-for="BookGenre" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="BookPrice" class="form-label">Price (USD)</label>
-                        <input asp-for="BookPrice" class="form-control" type="number" step="0.01" placeholder="Enter the price in USD" required />
+                        <label asp-for="BookPrice" class="form-label">Price (Rs)</label>
+                        <input asp-for="BookPrice" class="form-control" type="number" step="0.01" placeholder="Enter the price in Rs" required />
                         <span asp-validation-for="BookPrice" class="text-danger"></span>
                     </div>
                     <div class="form-group">
@@ -194,9 +203,19 @@
                         <span asp-validation-for="BookIsbn" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Rating" class="form-label">Rating (0-5)</label>
-                        <input asp-for="Rating" class="form-control" type="number" step="0.1" min="0" max="5" placeholder="Enter the rating (0-5)" required />
-                        <span asp-validation-for="Rating" class="text-danger"></span>
+                        <label class="form-label">Current Cover Image</label>
+                        @if (!string.IsNullOrEmpty(Model.CoverImagePath))
+                        {
+                        <img src="@Model.CoverImagePath" alt="@Model.BookTitle" class="current-cover-image" />
+                        }
+                        else
+                        {
+                        <p>No cover image available.</p>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Upload New Cover Image</label>
+                        <input type="file" name="coverImage" class="form-control" accept="image/*" />
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn-submit">Save Changes</button>

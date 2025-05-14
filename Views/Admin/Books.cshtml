@@ -10,18 +10,24 @@
             min-height: calc(100vh - 50px); /* Adjust for footer height */
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); /* Subtle gradient background */
             padding: 30px 20px;
+            display: flex;
+            justify-content: flex-start; /* Align content to the left */
+            align-items: flex-start; /* Align content to the top */
         }
 
-        /* Container for the books */
+        /* Container for the books, shifted left */
         .books-container {
-            width: 100%;
-            max-width: 1200px; /* Wider container for better layout of multiple cards */
-            margin: 0 auto;
+            width: 90%; /* Reduced width to fit within viewport */
+            max-width: 1100px; /* Adjusted max-width for better fit */
+            margin: 0 0 0 50px; /* Shift left with margin */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align content to the left */
         }
 
         /* Header section */
         .books-header {
-            text-align: center;
+            text-align: left; /* Align header text to the left */
             margin-bottom: 40px;
         }
 
@@ -40,15 +46,14 @@
                     background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green underline */
                     position: absolute;
                     bottom: -10px;
-                    left: 50%;
-                    transform: translateX(-50%);
+                    left: 0; /* Align underline to the left */
                     border-radius: 2px;
                 }
 
         /* Add new book button */
         .admin-action {
-            text-align: center;
-            margin-bottom: 40px;
+            text-align: left; /* Align button to the left */
+            margin-bottom: 20px;
         }
 
             .admin-action a {
@@ -68,123 +73,193 @@
                     box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
                 }
 
+        /* Search and Filter Section */
+        .search-filter-section {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+            .search-bar i {
+                position: absolute;
+                left: 15px;
+                color: #4A90E2;
+                font-size: 1.2rem;
+            }
+
+            .search-bar input {
+                padding: 12px 20px 12px 40px;
+                border-radius: 25px;
+                border: 1px solid #ddd;
+                font-size: 1rem;
+                width: 100%;
+                transition: all 0.3s ease;
+            }
+
+                .search-bar input:focus {
+                    border-color: #4A90E2;
+                    box-shadow: 0 0 8px rgba(74, 144, 226, 0.2);
+                    outline: none;
+                }
+
+        .filter-panel {
+            display: flex;
+            padding: 20px 0;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+            .filter-panel select {
+                padding: 12px 20px;
+                border-radius: 25px;
+                border: 1px solid #ddd;
+                font-size: 1rem;
+                width: 200px;
+                transition: all 0.3s ease;
+            }
+
+                .filter-panel select:focus {
+                    border-color: #4A90E2;
+                    box-shadow: 0 0 8px rgba(74, 144, 226, 0.2);
+                    outline: none;
+                }
+
+            .filter-panel .btn-primary {
+                padding: 12px 30px;
+                border-radius: 25px;
+                background: #4A90E2;
+                border: none;
+                font-weight: 600;
+                color: #ffffff;
+                transition: all 0.3s ease;
+            }
+
+                .filter-panel .btn-primary:hover {
+                    background: #3A80D2;
+                    transform: translateY(-3px);
+                    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+                }
+
+            .filter-panel .btn-secondary {
+                padding: 12px 30px;
+                border-radius: 25px;
+                background: #6c757d;
+                border: none;
+                font-weight: 600;
+                color: #ffffff;
+                transition: all 0.3s ease;
+            }
+
+                .filter-panel .btn-secondary:hover {
+                    background: #5a6268;
+                    transform: translateY(-3px);
+                    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+                }
+
         /* No books message */
         .alert-info {
             max-width: 600px;
-            margin: 0 auto;
             background-color: #d1ecf1;
             color: #0c5460;
             border-radius: 8px;
             padding: 15px;
             font-size: 1rem;
-            text-align: center;
+            text-align: left; /* Align text to the left */
         }
 
-        /* Book list styling */
-        .book-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
-            gap: 30px;
-        }
-
-        /* Book card styling */
-        .book-card {
+        /* Table container with vertical scroll */
+        .table-container {
+            max-height: 600px; /* Adjust height as needed */
+            overflow-y: auto; /* Enable vertical scrolling */
+            overflow-x: auto; /* Enable horizontal scrolling if needed */
+            border: 1px solid #ddd;
+            border-radius: 8px;
             background: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%; /* Ensure it takes the full width of the container */
         }
 
-            .book-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        /* Table styling */
+        .book-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1rem; /* Slightly larger font for readability */
+        }
+
+            .book-table th,
+            .book-table td {
+                padding: 15px 20px; /* Increased padding for larger cells */
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+                min-width: 100px; /* Minimum width for columns to ensure spacing */
             }
 
-            .book-card img {
-                width: 100%;
-                max-width: 200px;
-                height: 200px;
-                object-fit: cover;
-                border-radius: 10px;
-                margin-bottom: 15px;
-            }
-
-            .book-card .title {
-                font-size: 1.4rem;
+            .book-table th {
+                background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green gradient */
+                color: #ffffff;
                 font-weight: 600;
-                color: #333;
-                margin-bottom: 10px;
-                text-align: center;
-                line-height: 1.3;
+                position: sticky;
+                top: 0;
+                z-index: 1;
             }
 
-            .book-card .author {
-                font-size: 0.95rem;
-                color: #666;
-                margin-bottom: 10px;
-                text-align: center;
+            .book-table tbody tr:hover {
+                background-color: #f8f9fa;
             }
 
-            .book-card .rating {
-                color: #f39c12;
-                font-size: 1.1rem;
-                margin-bottom: 10px;
-                text-align: center;
+            /* Cover image styling */
+            .book-table .cover-image {
+                width: 80px; /* Increased size */
+                height: 80px; /* Increased size */
+                object-fit: cover;
+                border-radius: 5px;
             }
 
-                .book-card .rating i {
-                    margin-right: 3px;
-                }
-
-            .book-card .price {
-                font-size: 1.2rem;
-                font-weight: 700;
-                color: #4CAF50; /* Green for admin theme */
-                margin-bottom: 15px;
-                text-align: center;
-            }
-
-            /* Actions (buttons) */
-            .book-card .actions {
+            /* Actions buttons */
+            .book-table .actions {
                 display: flex;
-                gap: 15px;
-                justify-content: center;
-                margin-top: 15px;
+                gap: 10px;
             }
 
-                .book-card .actions a,
-                .book-card .actions button {
-                    padding: 10px 20px;
-                    border-radius: 8px;
-                    font-size: 0.95rem;
+                .book-table .actions a,
+                .book-table .actions button {
+                    padding: 8px 15px;
+                    border-radius: 5px;
+                    font-size: 0.9rem;
                     font-weight: 600;
                     color: #ffffff;
                     text-decoration: none;
-                    transition: transform 0.3s ease, box-shadow 0.3s ease;
                     border: none;
+                    cursor: pointer;
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
                 }
 
-                .book-card .actions .btn-edit {
+                .book-table .actions .btn-edit {
                     background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green gradient */
                 }
 
-                    .book-card .actions .btn-edit:hover {
-                        transform: translateY(-2px);
-                        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+                    .book-table .actions .btn-edit:hover {
+                        transform: translateY(-1px);
+                        box-shadow: 0 3px 10px rgba(76, 175, 80, 0.3);
                     }
 
-                .book-card .actions .btn-delete {
+                .book-table .actions .btn-delete {
                     background: linear-gradient(90deg, #dc3545 0%, #c82333 100%); /* Red gradient */
                 }
 
-                    .book-card .actions .btn-delete:hover {
-                        transform: translateY(-2px);
-                        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+                    .book-table .actions .btn-delete:hover {
+                        transform: translateY(-1px);
+                        box-shadow: 0 3px 10px rgba(220, 53, 69, 0.3);
                     }
     </style>
 
@@ -196,6 +271,74 @@
             <div class="admin-action">
                 <a href="@Url.Action("AddBook", "Admin")">Add New Book</a>
             </div>
+            <!-- Search and Filter Section -->
+            <div class="search-filter-section">
+                <form method="get" asp-action="Books">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" name="search" placeholder="Search by Title or Author..." class="form-control" value="@ViewBag.Search" />
+                    </div>
+                    <div class="filter-panel">
+                        <select name="genre" class="form-select">
+                            <option value="">All Genres</option>
+                            @if (ViewBag.Genre == "Fiction")
+                        {
+                            <option value="Fiction" selected>Fiction</option>
+                        }
+                        else
+                        {
+                            <option value="Fiction">Fiction</option>
+                        }
+                            @if (ViewBag.Genre == "Non-Fiction")
+                        {
+                            <option value="Non-Fiction" selected>Non-Fiction</option>
+                        }
+                        else
+                        {
+                            <option value="Non-Fiction">Non-Fiction</option>
+                        }
+                            @if (ViewBag.Genre == "Dystopian")
+                        {
+                            <option value="Dystopian" selected>Dystopian</option>
+                        }
+                        else
+                        {
+                            <option value="Dystopian">Dystopian</option>
+                        }
+                            @if (ViewBag.Genre == "Mystery")
+                        {
+                            <option value="Mystery" selected>Mystery</option>
+                        }
+                        else
+                        {
+                            <option value="Mystery">Mystery</option>
+                        }
+                            @if (ViewBag.Genre == "Sci-Fi")
+                        {
+                            <option value="Sci-Fi" selected>Sci-Fi</option>
+                        }
+                        else
+                        {
+                            <option value="Sci-Fi">Sci-Fi</option>
+                        }
+                        </select>
+                        <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        <a href="@Url.Action("Books", "Admin")" class="btn btn-secondary">Reset Filter</a>
+                    </div>
+                </form>
+            </div>
+            @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success" role="alert">
+                @TempData["Success"]
+            </div>
+        }
+            @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @TempData["Error"]
+            </div>
+        }
             @if (Model == null || Model.Count == 0)
         {
             <div class="alert alert-info" role="alert">
@@ -204,42 +347,56 @@
         }
         else
         {
-            <div class="book-list">
-                @foreach (var book in Model)
-                {
-                <div class="book-card">
-                    <img src="https://via.placeholder.com/300x200?text=@(book.BookTitle)" alt="@(book.BookTitle)">
-                    <h5 class="title">@book.BookTitle</h5>
-                    <p class="author">@book.BookAuthor</p>
-                    <div class="rating">
-                        @{
-                                int fullStars = (int)book.Rating;
-                                bool hasHalfStar = book.Rating - fullStars >= 0.5m; // Changed 0.5 to 0.5m (decimal literal)
-                                for (int i = 0; i < fullStars; i++)
-                                {
-                            <i class="fas fa-star"></i>
-                                }
-                                if (hasHalfStar)
-                                {
-                            <i class="fas fa-star-half-alt"></i>
-                                    fullStars++;
-                                }
-                                for (int i = fullStars; i < 5; i++)
-                                {
-                            <i class="far fa-star"></i>
-                                }
+            <div class="table-container">
+                <table class="book-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cover Image</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Genre</th>
+                            <th>Price (Rs)</th>
+                            <th>Format</th>
+                            <th>ISBN</th>
+                            <th>Stock</th>
+                            <th>Rating</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var book in Model)
+                        {
+                        <tr>
+                            <td>@book.BookId</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(book.CoverImagePath))
+                                    {
+                                <img src="@book.CoverImagePath" alt="@book.BookTitle" class="cover-image" />
+                                    }
+                                    else
+                                    {
+                                <img src="https://via.placeholder.com/80x80?text=No+Image" alt="No Image" class="cover-image" />
+                                    }
+                            </td>
+                            <td>@book.BookTitle</td>
+                            <td>@book.BookAuthor</td>
+                            <td>@book.BookGenre</td>
+                            <td>@book.BookPrice.ToString("N2")</td>
+                            <td>@book.BookFormat</td>
+                            <td>@book.BookIsbn</td>
+                            <td>@book.BookStock</td>
+                            <td>@book.Rating</td>
+                            <td class="actions">
+                                <a href="@Url.Action("EditBook", "Admin", new { id = book.BookId })" class="btn-edit">Edit</a>
+                                <form asp-action="DeleteBook" asp-route-id="@book.BookId" method="post" class="d-inline">
+                                    <button type="submit" class="btn-delete" onclick="return confirm('Are you sure you want to delete this book?')">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
                         }
-                        <span>(@book.Rating)</span>
-                    </div>
-                    <p class="price">NPR @((book.BookPrice * 133).ToString("N2"))</p>
-                    <div class="actions">
-                        <a href="@Url.Action("EditBook", "Admin", new { id = book.BookId })" class="btn-edit">Edit</a>
-                        <form asp-action="DeleteBook" asp-route-id="@book.BookId" method="post" class="d-inline">
-                            <button type="submit" class="btn-delete" onclick="return confirm('Are you sure you want to delete this book?')">Delete</button>
-                        </form>
-                    </div>
-                </div>
-                }
+                    </tbody>
+                </table>
             </div>
         }
         </div>

@@ -5,40 +5,36 @@
 }
 
 <style>
-    /* Ensure the page takes up the full viewport height */
     .add-book-page {
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: calc(100vh - 50px); /* Adjust for footer height */
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); /* Subtle gradient background */
+        min-height: calc(100vh - 50px);
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         padding: 20px;
     }
 
-    /* Container for the form */
     .add-book-container {
         width: 100%;
-        max-width: 600px; /* Slightly wider to accommodate more fields */
+        max-width: 600px;
     }
 
-    /* Card styling for the form */
     .add-book-card {
         background: #ffffff;
         border-radius: 15px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         border: none;
-        overflow: hidden; /* Ensure content stays within rounded corners */
+        overflow: hidden;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
         .add-book-card:hover {
-            transform: translateY(-5px); /* Slight lift effect on hover */
+            transform: translateY(-5px);
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
         }
 
-        /* Card header for the title */
         .add-book-card .card-header {
-            background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%); /* Green gradient matching admin theme */
+            background: linear-gradient(90deg, #4CAF50 0%, #388E3C 100%);
             color: #ffffff;
             text-align: center;
             padding: 20px;
@@ -52,12 +48,10 @@
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
 
-        /* Card body for the form */
         .add-book-card .card-body {
             padding: 30px;
         }
 
-    /* Form group styling */
     .form-group {
         margin-bottom: 20px;
     }
@@ -81,18 +75,16 @@
 
             .form-group input:focus,
             .form-group select:focus {
-                border-color: #4CAF50; /* Green theme for admin */
+                border-color: #4CAF50;
                 box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
                 outline: none;
             }
 
-    /* Validation error styling */
     .text-danger {
         font-size: 0.85rem;
         margin-top: 5px;
     }
 
-    /* Form actions (buttons) */
     .form-actions {
         display: flex;
         gap: 15px;
@@ -111,7 +103,7 @@
         }
 
         .form-actions .btn-submit {
-            background-color: #4CAF50; /* Green theme */
+            background-color: #4CAF50;
             border-color: #4CAF50;
             color: #ffffff;
         }
@@ -144,7 +136,7 @@
                 <h2 class="card-title">Add New Book</h2>
             </div>
             <div class="card-body">
-                <form asp-action="AddBook" method="post">
+                <form asp-action="AddBook" method="post" enctype="multipart/form-data">
                     <div class="form-group">
                         <label asp-for="BookTitle" class="form-label">Book Title</label>
                         <input asp-for="BookTitle" class="form-control" placeholder="Enter the book title" required />
@@ -168,8 +160,8 @@
                         <span asp-validation-for="BookGenre" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="BookPrice" class="form-label">Price (USD)</label>
-                        <input asp-for="BookPrice" class="form-control" type="number" step="0.01" placeholder="Enter the price in USD" required />
+                        <label asp-for="BookPrice" class="form-label">Price (Rs)</label>
+                        <input asp-for="BookPrice" class="form-control" type="number" step="0.01" placeholder="Enter the price in Rs" required />
                         <span asp-validation-for="BookPrice" class="text-danger"></span>
                     </div>
                     <div class="form-group">
@@ -193,9 +185,8 @@
                         <span asp-validation-for="BookIsbn" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Rating" class="form-label">Rating (0-5)</label>
-                        <input asp-for="Rating" class="form-control" type="number" step="0.1" min="0" max="5" placeholder="Enter the rating (0-5)" required />
-                        <span asp-validation-for="Rating" class="text-danger"></span>
+                        <label for="coverImage" class="form-label">Book Cover Image</label>
+                        <input type="file" name="coverImage" class="form-control" accept="image/*" />
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn-submit">Add Book</button>

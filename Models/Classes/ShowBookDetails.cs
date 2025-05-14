@@ -10,5 +10,6 @@ namespace GyanGanga.Web.Models.Classes
         public string? BookIsbn { get; set; }
         public string? BookFormat { get; set; }
         public int BookStock { get; set; }
+        public string? CoverImagePath { get; set; }
     }
 }

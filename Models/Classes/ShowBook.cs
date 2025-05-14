@@ -13,5 +13,6 @@ namespace GyanGanga.Web.Models.Classes
         public int Quantity { get; set; }
         public int BookStock { get; set; }
         public bool IsBookmarked { get; set; }
+        public string? CoverImagePath { get; set; }
     }
 }

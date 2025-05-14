@@ -1,0 +1,304 @@
+@model List<GyanGanga.Web.Models.Classes.ShowBook>
+
+    @{
+    ViewData["Title"] = "Order Confirmation";
+    }
+
+    <style>
+        /* Page Layout */
+        .confirmation-page {
+            min-height: calc(100vh - 50px);
+            background: #f7f9fc;
+            padding: 20px 20px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Main Container */
+        .confirmation-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 0 0 0; /* Align with sidebar */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align content to the left */
+        }
+
+        /* Confirmation Section */
+        .confirmation-section {
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            padding: 30px;
+            margin-bottom: 20px;
+            text-align: left;
+            width: 100%;
+            max-width: 600px;
+            background: linear-gradient(145deg, #ffffff, #f7f9fc);
+            border: 1px solid #e6f0fa;
+        }
+
+            .confirmation-section h2 {
+                font-size: 2.5rem;
+                font-weight: 700;
+                color: #2d3436;
+                margin-bottom: 20px;
+                font-family: 'Playfair Display', serif;
+                background: linear-gradient(90deg, #74b9ff, #4a90e2);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                position: relative;
+            }
+
+                .confirmation-section h2::before {
+                    content: '';
+                    width: 80px;
+                    height: 4px;
+                    background: linear-gradient(90deg, #74b9ff, #4a90e2);
+                    position: absolute;
+                    bottom: -10px;
+                    left: 0;
+                    border-radius: 2px;
+                }
+
+            .confirmation-section p {
+                font-size: 1.2rem;
+                color: #666;
+                margin-bottom: 20px;
+                font-family: 'Roboto', sans-serif;
+                line-height: 1.6;
+            }
+
+            .confirmation-section .btn-continue {
+                padding: 12px 30px;
+                border-radius: 25px;
+                background: #74b9ff;
+                border: none;
+                font-weight: 600;
+                color: #ffffff;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                font-family: 'Roboto', sans-serif;
+                display: inline-flex;
+                align-items: center;
+            }
+
+                .confirmation-section .btn-continue:hover {
+                    background: #4a90e2;
+                    transform: translateY(-3px);
+                    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+                }
+
+                .confirmation-section .btn-continue i {
+                    margin-right: 5px;
+                }
+
+        /* Order Summary Section */
+        .order-summary-section {
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            padding: 30px;
+            margin-bottom: 20px;
+            text-align: left;
+            width: 100%;
+            max-width: 600px;
+            background: linear-gradient(145deg, #ffffff, #f7f9fc);
+            border: 1px solid #e6f0fa;
+        }
+
+            .order-summary-section h3 {
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: #2d3436;
+                margin-bottom: 20px;
+                font-family: 'Playfair Display', serif;
+                background: linear-gradient(90deg, #74b9ff, #4a90e2);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                position: relative;
+            }
+
+                .order-summary-section h3::before {
+                    content: '';
+                    width: 80px;
+                    height: 4px;
+                    background: linear-gradient(90deg, #74b9ff, #4a90e2);
+                    position: absolute;
+                    bottom: -10px;
+                    left: 0;
+                    border-radius: 2px;
+                }
+
+            .order-summary-section .order-item {
+                display: flex;
+                align-items: center;
+                margin-bottom: 15px;
+                padding-bottom: 15px;
+                border-bottom: 1px solid #e6f0fa;
+            }
+
+                .order-summary-section .order-item img {
+                    width: 60px;
+                    height: 90px;
+                    object-fit: cover;
+                    border-radius: 8px;
+                    margin-right: 15px;
+                    border-bottom: 2px solid #74b9ff;
+                }
+
+            .order-summary-section .order-item-details {
+                flex-grow: 1;
+            }
+
+                .order-summary-section .order-item-details .title {
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                    color: #2d3436;
+                    margin-bottom: 5px;
+                    font-family: 'Roboto', sans-serif;
+                }
+
+                .order-summary-section .order-item-details .author {
+                    font-size: 0.9rem;
+                    color: #7f8c8d;
+                    margin-bottom: 5px;
+                    font-family: 'Roboto', sans-serif;
+                }
+
+                .order-summary-section .order-item-details .quantity {
+                    font-size: 0.9rem;
+                    color: #666;
+                    margin-bottom: 5px;
+                    font-family: 'Roboto', sans-serif;
+                }
+
+                .order-summary-section .order-item-details .price {
+                    font-size: 1rem;
+                    font-weight: 700;
+                    color: #74b9ff;
+                    font-family: 'Roboto', sans-serif;
+                }
+
+            .order-summary-section .order-totals {
+                margin-top: 20px;
+                padding-top: 20px;
+                border-top: 1px solid #e6f0fa;
+            }
+
+                .order-summary-section .order-totals p {
+                    font-size: 1.1rem;
+                    color: #2d3436;
+                    margin-bottom: 10px;
+                    font-family: 'Roboto', sans-serif;
+                    display: flex;
+                    justify-content: space-between;
+                }
+
+                .order-summary-section .order-totals .total-price {
+                    font-weight: 700;
+                    color: #74b9ff;
+                    font-size: 1.2rem;
+                }
+
+        /* Responsive Adjustments */
+        @@media (max-width: 768px) {
+            .confirmation-section h2, .order-summary-section h3 {
+                font-size: 2rem;
+            }
+
+            .confirmation-section p {
+                font-size: 1rem;
+            }
+
+            .order-summary-section .order-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+                .order-summary-section .order-item img {
+                    margin-right: 0;
+                    margin-bottom: 10px;
+                }
+
+            .order-summary-section .order-item-details {
+                text-align: left;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .confirmation-section, .order-summary-section {
+                padding: 20px;
+            }
+
+                .confirmation-section .btn-continue {
+                    width: 100%;
+                    text-align: center;
+                }
+
+                .order-summary-section .order-totals p {
+                    font-size: 1rem;
+                }
+
+                .order-summary-section .order-totals .total-price {
+                    font-size: 1.1rem;
+                }
+        }
+    </style>
+
+    <div class="confirmation-page">
+        <div class="confirmation-container">
+            <!-- Confirmation Message -->
+            <div class="confirmation-section">
+                <h2>Order Placed Successfully!</h2>
+                <p>
+                    Thank you for shopping with Gyan Ganga! Your order has been placed successfully and will be processed soon. You’ll receive a confirmation email with the details shortly.
+                </p>
+                <a href="@Url.Action("Index", "Books")" class="btn-continue"><i class="fas fa-arrow-left"></i> Continue Shopping</a>
+            </div>
+
+            <!-- Order Details Summary -->
+            <div class="order-summary-section">
+                <h3>Order Details Summary</h3>
+                @if (Model != null && Model.Any())
+            {
+                foreach (var book in Model)
+                {
+                <div class="order-item">
+                    @if (!string.IsNullOrEmpty(book.CoverImagePath))
+                        {
+                    <img src="@book.CoverImagePath" alt="@book.BookTitle">
+                        }
+                        else
+                        {
+                    <img src="https://via.placeholder.com/60x90?text=@book.BookTitle" alt="@book.BookTitle">
+                        }
+                    <div class="order-item-details">
+                        <h5 class="title">@book.BookTitle</h5>
+                        <p class="author">@book.BookAuthor</p>
+                        <p class="quantity">Quantity: @book.Quantity</p>
+                        <p class="price">Rs @((book.BookPrice * book.Quantity).ToString("N2"))</p>
+                    </div>
+                </div>
+                }
+
+                <div class="order-totals">
+                    <p>Total Items: <span>@ViewBag.TotalItems</span></p>
+                    <p>Subtotal: <span>Rs @ViewBag.TotalPrice.ToString("N2")</span></p>
+                    <p>Discount: <span>Rs @ViewBag.TotalDiscount.ToString("N2")</span></p>
+                    <p class="total-price">Final Total: <span>Rs @ViewBag.FinalPrice.ToString("N2")</span></p>
+                </div>
+            }
+            else
+            {
+                <p>No order details available.</p>
+            }
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    }

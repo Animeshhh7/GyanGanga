@@ -34,6 +34,7 @@ namespace GyanGanga.Web.Data
             builder.Entity<Book>().Property(b => b.BookFormat).HasColumnName("book_format");
             builder.Entity<Book>().Property(b => b.BookStock).HasColumnName("book_stock");
             builder.Entity<Book>().Property(b => b.Rating).HasColumnName("rating");
+            builder.Entity<Book>().Property(b => b.CoverImagePath).HasColumnName("cover_image_path");
 
             builder.Entity<Bookmarks>().ToTable("bookmarks");
             builder.Entity<Bookmarks>().Property(s => s.BookId).HasColumnName("book_id");

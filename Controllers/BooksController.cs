@@ -1,10 +1,9 @@
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using GyanGanga.Web.Models.Classes;
 using GyanGanga.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using System.Linq;
-using System;
 
 namespace GyanGanga.Web.Controllers
 {
@@ -17,11 +16,11 @@ namespace GyanGanga.Web.Controllers
             _bookHelper = bookHelper;
         }
 
-        public async Task<IActionResult> Index(string search, string sort, string genre, string format, decimal? minPrice, decimal? maxPrice, int page = 1)
+        public async Task<IActionResult> Index(string search, string sort, string genre, string format, decimal? minPrice, decimal? maxPrice)
         {
-            const int pageSize = 5;
             var booksQuery = await _bookHelper.GetAllBooks();
 
+            // Apply filters
             if (!string.IsNullOrEmpty(search))
             {
                 search = search.ToLower();
@@ -72,22 +71,16 @@ namespace GyanGanga.Web.Controllers
                     break;
             }
 
-            var totalBooks = booksQuery.Count;
-            var totalPages = (int)Math.Ceiling((double)totalBooks / pageSize);
-            page = Math.Max(1, Math.Min(page, totalPages));
-            var books = booksQuery.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-
             var userId = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (userId != null)
             {
-                foreach (var book in books)
+                foreach (var book in booksQuery)
                 {
                     book.IsBookmarked = await _bookHelper.IsBookmarked(book.BookId, userId);
                 }
             }
 
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
+            // Pass filter parameters to the view for form persistence
             ViewBag.Search = search;
             ViewBag.Sort = sort;
             ViewBag.Genre = genre;
@@ -95,7 +88,7 @@ namespace GyanGanga.Web.Controllers
             ViewBag.MinPrice = minPrice;
             ViewBag.MaxPrice = maxPrice;
 
-            return View(books);
+            return View(booksQuery); // Return all books without pagination
         }
 
         public async Task<IActionResult> Details(int id)
@@ -233,9 +226,32 @@ namespace GyanGanga.Web.Controllers
                 return RedirectToAction("Cart");
             }
 
+            // Pass cart details to TempData before clearing the cart
+            TempData["OrderItems"] = System.Text.Json.JsonSerializer.Serialize(cartBooks);
+            TempData["TotalItems"] = cartBooks.Sum(b => b.Quantity);
+            TempData["TotalPrice"] = cartBooks.Sum(b => b.Quantity * b.BookPrice).ToString("N2"); // Convert to string
+            TempData["TotalDiscount"] = 0m.ToString("N2"); // Convert to string
+            TempData["FinalPrice"] = cartBooks.Sum(b => b.Quantity * b.BookPrice).ToString("N2"); // Convert to string
+
             await _bookHelper.CreateOrder(userId, cartBooks);
-            TempData["Success"] = "Order placed successfully!";
-            return RedirectToAction("Cart");
+            return RedirectToAction("OrderConfirmation");
+        }
+
+        [Authorize]
+        public IActionResult OrderConfirmation()
+        {
+            // Retrieve order details from TempData
+            var orderItemsJson = TempData["OrderItems"]?.ToString();
+            var orderItems = string.IsNullOrEmpty(orderItemsJson)
+                ? new List<ShowBook>()
+                : System.Text.Json.JsonSerializer.Deserialize<List<ShowBook>>(orderItemsJson);
+
+            ViewBag.TotalItems = TempData["TotalItems"] ?? 0;
+            ViewBag.TotalPrice = decimal.Parse(TempData["TotalPrice"]?.ToString() ?? "0");
+            ViewBag.TotalDiscount = decimal.Parse(TempData["TotalDiscount"]?.ToString() ?? "0");
+            ViewBag.FinalPrice = decimal.Parse(TempData["FinalPrice"]?.ToString() ?? "0");
+
+            return View(orderItems);
         }
     }
 }

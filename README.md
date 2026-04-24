@@ -49,8 +49,6 @@ GyaanGanga is a .NET-based online book platform where users can browse books, ma
 ### 🛒 Cart & Orders
 ![Cart Summary](screenshots/cart_summary.png)
 
-![Order Success](screenshots/order_success.png)
-
 ![Purchase History](screenshots/purchase_history.png)
 
 ---

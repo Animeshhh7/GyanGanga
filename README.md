@@ -7,7 +7,7 @@ GyaanGanga is a .NET-based online book platform where users can browse books, ma
 ## 🛠️ Tech Stack
 - .NET (MAUI)  
 - C#  
-- SQL Database  
+- PostgreSQL 
 
 ---
 

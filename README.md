@@ -34,34 +34,34 @@ GyaanGanga is a .NET-based online book platform where users can browse books, ma
 
 ### 🏠 User Interface
 <p align="center">
-  <img src="assets/screenshots/homepage.png" width="200"/>
-  <img src="assets/screenshots/homepage ui - 2.png" width="200"/>
-  <img src="assets/screenshots/bookspage.png" width="200"/>
+  <img src="screenshots/homepage.png" width="200"/>
+  <img src="screenshots/homepage ui - 2.png" width="200"/>
+  <img src="screenshots/bookspage.png" width="200"/>
 </p>
 
 <p align="center">
-  <img src="assets/screenshots/bookmarks.png" width="200"/>
-  <img src="assets/screenshots/cart summary.png" width="200"/>
-  <img src="assets/screenshots/order placed succesfully after checkout from cart.png" width="200"/>
+  <img src="screenshots/bookmarks.png" width="200"/>
+  <img src="screenshots/cart summary.png" width="200"/>
+  <img src="screenshots/order placed succesfully after checkout from cart.png" width="200"/>
 </p>
 
 <p align="center">
-  <img src="assets/screenshots/purchase history.png" width="200"/>
-  <img src="assets/screenshots/review submitted success.png" width="200"/>
+  <img src="screenshots/purchase history.png" width="200"/>
+  <img src="screenshots/review submitted success.png" width="200"/>
 </p>
 
 ---
 
 ### 🛠️ Admin Panel
 <p align="center">
-  <img src="assets/screenshots/manage books - admin.png" width="200"/>
-  <img src="assets/screenshots/add new book - admin.png" width="200"/>
-  <img src="assets/screenshots/manage orders - admin.png" width="200"/>
+  <img src="screenshots/manage books - admin.png" width="200"/>
+  <img src="screenshots/add new book - admin.png" width="200"/>
+  <img src="screenshots/manage orders - admin.png" width="200"/>
 </p>
 
 <p align="center">
-  <img src="assets/screenshots/manage announcements - admin.png" width="200"/>
-  <img src="assets/screenshots/admin - reports.png" width="200"/>
+  <img src="screenshots/manage announcements - admin.png" width="200"/>
+  <img src="screenshots/admin - reports.png" width="200"/>
 </p>
 
 ---

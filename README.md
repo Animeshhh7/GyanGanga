@@ -33,43 +33,43 @@ GyaanGanga is a .NET-based online book platform where users can browse books, ma
 ## 📱 Screenshots
 
 ### 🏠 Home
-![Home](assets/screenshots/homepage.png)
+![Home](screenshots/homepage.png)
 
-![Home UI](assets/screenshots/homepage2.png)
+![Home UI](screenshots/homepage2.png)
 
 ---
 
 ### 📚 Books
-![Books Page](assets/screenshots/bookspage.png)
+![Books Page](screenshots/bookspage.png)
 
-![Bookmarks](assets/screenshots/bookmarks.png)
+![Bookmarks](screenshots/bookmarks.png)
 
 ---
 
 ### 🛒 Cart & Orders
-![Cart Summary](assets/screenshots/cart_summary.png)
+![Cart Summary](screenshots/cart_summary.png)
 
-![Order Success](assets/screenshots/order_success.png)
+![Order Success](screenshots/order_success.png)
 
-![Purchase History](assets/screenshots/purchase_history.png)
+![Purchase History](screenshots/purchase_history.png)
 
 ---
 
 ### ⭐ Reviews
-![Review Submitted](assets/screenshots/review_success.png)
+![Review Submitted](screenshots/review_success.png)
 
 ---
 
 ### 🛠️ Admin Panel
-![Manage Books](assets/screenshots/manage_books_admin.png)
+![Manage Books](screenshots/manage_books_admin.png)
 
-![Add Book](assets/screenshots/add_new_book_admin.png)
+![Add Book](screenshots/add_new_book_admin.png)
 
-![Manage Orders](assets/screenshots/manage_orders_admin.png)
+![Manage Orders](screenshots/manage_orders_admin.png)
 
-![Announcements](assets/screenshots/manage_announcements_admin.png)
+![Announcements](screenshots/manage_announcements_admin.png)
 
-![Reports](assets/screenshots/admin_reports.png)
+![Reports](screenshots/admin_reports.png)
 
 ---
 
